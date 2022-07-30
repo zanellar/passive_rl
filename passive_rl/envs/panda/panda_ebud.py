@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 from gym import spaces 
-from robot_learning.envs.reach import EnvReach
+from pandamjrl.envs.reach import EnvReach
 
 
 class PandaEBud(gym.Env): 

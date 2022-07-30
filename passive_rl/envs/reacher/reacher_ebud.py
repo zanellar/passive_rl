@@ -12,7 +12,8 @@ class ReacherEBud(gym.Env):
                 max_episode_length = 50, 
                 energy_tank_init = 7, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank  
-                debug = False
+                debug = False,
+                mjmodel = "reacher_original"
                 ):
         super(ReacherEBud, self).__init__()
 
@@ -23,16 +24,17 @@ class ReacherEBud(gym.Env):
         ################# Init Learning Environment ####################
 
         # Vanilla Environment
-        self._env = ReacherEnv()   
-
-        # Vanilla State
-        self.state = self._env._get_obs()  
-      
+        self._env = ReacherEnv(mjmodel)   
+ 
         # Observations 
         self.observation_space = self._env.observation_space 
 
         # Actions  
         self.action_space = self._env.action_space 
+
+        # Vanilla State
+        self.state = self._env._get_obs()  
+        self.action = np.zeros(self._env.action_space.shape)
 
         ################# Init Energy-budgeting Framework ####################
  
@@ -45,11 +47,16 @@ class ReacherEBud(gym.Env):
   
         self.energy_stop_ct = 0
     
-    def _update_energy_tank(self, action, state_new):
+    def _update_energy_tank(self, state_new):
+        ''' 
+        Etank(t) = Etank(t-1) - Eex(t)
+        Ex(t) = sum(tau(t-1,i)*(q(t,i) - q(t-1,i)), i=1,2)
+        '''
+        
         joints_old = np.arccos(self.state[:2])
         joints = np.arccos(state_new[:2])   
         d_joints = joints - joints_old
-        self.energy_joints = action*d_joints  
+        self.energy_joints = self.action*d_joints  
         self.energy_exchanged = sum(self.energy_joints)
         self.energy_tank -= self.energy_exchanged
 
@@ -57,12 +64,12 @@ class ReacherEBud(gym.Env):
         return is_empty
   
     def step(self, action):  
-  
+
         # Vanilla Environment Step
         state_new, _reward, _done, _info = self._env.step(action) 
 
         # Energy Budgeting  
-        energy_done = self._update_energy_tank(action, state_new) 
+        energy_done = self._update_energy_tank(state_new) 
  
         horizon_done = self.t>=self.T
         done = energy_done or _done or horizon_done
@@ -74,6 +81,7 @@ class ReacherEBud(gym.Env):
                     energy_tank = self.energy_tank, 
                     _info = _info)   
 
+        self.action = action
         self.state = state_new 
         self.t += 1 
 

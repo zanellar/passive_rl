@@ -52,4 +52,7 @@ Thumbs.db
 *.pyc
 
 # training data 
-data/logs 
+data/training 
+
+# setup
+passive_rl.egg-info

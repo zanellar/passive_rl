@@ -5,9 +5,9 @@ from passive_rl.utils.pkgpaths import PkgPath
 
 
 class ReacherEnv(mujoco_env.MujocoEnv, utils.EzPickle):
-    def __init__(self,):
+    def __init__(self,mjmodel="reacher_original"):
         utils.EzPickle.__init__(self)
-        mujoco_env.MujocoEnv.__init__(self, PkgPath.xml("reacher_original.xml"), 2)
+        mujoco_env.MujocoEnv.__init__(self, PkgPath.modelsxml(f"{mjmodel}.xml"), 2)
 
     def step(self, a):
         vec = self.get_body_com("fingertip") - self.get_body_com("target")

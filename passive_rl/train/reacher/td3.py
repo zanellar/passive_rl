@@ -11,7 +11,8 @@ from gym.wrappers.normalize import NormalizeObservation, NormalizeReward
 from passive_rl.utils.pkgpaths import PkgPath
 from passive_rl.envs.reacher.reacher_ebud import ReacherEBud
 
-SAVE_DATA_FOLDER = "/home/riccardo/projects/nrg_rl/contrib1/reacher"
+AGENT_NAME = "TD3"
+ENV_NAME = 'reacher' 
 
 def linear_schedule(initial_value: float) -> Callable[[float], float]:
     """
@@ -58,29 +59,18 @@ action_noise = OrnsteinUhlenbeckActionNoise(
     mean=np.zeros(env.action_space.shape), 
     sigma=0.2* np.ones(env.action_space.shape)  
 )
-
-model = DDPG(
+model = TD3(
     policy = 'MlpPolicy',
     env = env,  
-    buffer_size=int(1e6),
+    action_noise=action_noise,
     learning_rate= linear_schedule(1e-4), 
     gamma=0.99,
     tau=1e-3,  
-    batch_size=256,    
-    action_noise = action_noise,
-    # replay_buffer_class=HerReplayBuffer,
-    # replay_buffer_kwargs=dict(
-    #     n_sampled_goal=4,
-    #     goal_selection_strategy='future',
-    #     online_sampling=True,
-    #     max_episode_length=max_episode_length,
-    # ),
-    # train_freq = (1, "episode"),   
-    # gradient_steps =  -1,  
+    batch_size=256,   
     learning_starts = 10*max_episode_length, 
     verbose = 1, 
-    tensorboard_log =  PkgPath.training("logs/reacher")
-) 
+    tensorboard_log =  PkgPath.trainingdata(f"tensorboard/{ENV_NAME}")
+)
 
 ########################################################################
 ########################################################################
@@ -102,10 +92,10 @@ model = DDPG(
   
 # energy_callback=EnergyCallBack(env)   
    
-checkpoint_callback = CheckpointCallback(save_freq=1000*max_episode_length, save_path=PkgPath.training("checkpoints/reacher/ddpg"))
+checkpoint_callback = CheckpointCallback(save_freq=1000*max_episode_length, save_path=PkgPath.trainingdata(f"checkpoints/{ENV_NAME}/{AGENT_NAME}"))
 eval_callback = EvalCallback(env, 
-                             best_model_save_path=PkgPath.training('checkpoints/reacher/ddpg/best_model'),
-                             log_path=PkgPath.training( 'checkpoints/reacher/ddpg/eval_results'), 
+                             best_model_save_path=PkgPath.trainingdata(f'checkpoints/{ENV_NAME}/{AGENT_NAME}/best_model'),
+                             log_path=PkgPath.trainingdata( f'checkpoints/{ENV_NAME}/{AGENT_NAME}/eval_results'), 
                              eval_freq=50*max_episode_length,
                              n_eval_episodes=5, 
                              deterministic=True, 
