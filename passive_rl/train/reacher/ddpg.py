@@ -1,4 +1,5 @@
 import os
+import gym
 from typing import Callable
 import numpy as np 
 from stable_baselines3 import HerReplayBuffer, SAC, TD3, DDPG
@@ -41,18 +42,17 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
 
 max_episode_length = 50
 
-# import gym
-# env = gym.make('Reacher-v2')
+env = gym.make('Reacher-v2')
 
-env = ReacherEBud(
-    max_episode_length=max_episode_length,  
-    energy_tank_init = 7, # initial energy in the tank
-    energy_tank_threshold = 0, # minimum energy in the tank  
-    debug = False
-)  
+# env = ReacherEBud(
+#     max_episode_length=max_episode_length,  
+#     energy_tank_init = 7, # initial energy in the tank
+#     energy_tank_threshold = 0, # minimum energy in the tank  
+#     debug = False
+# )  
 
-env = Monitor(env)                      # A monitor wrapper for Gym environments, it is used to know the episode reward, length, time and other data
-env = NormalizeObservation(env) 
+# env = Monitor(env)                      # A monitor wrapper for Gym environments, it is used to know the episode reward, length, time and other data
+# env = NormalizeObservation(env) 
 
 
 action_noise = OrnsteinUhlenbeckActionNoise(
@@ -63,10 +63,10 @@ action_noise = OrnsteinUhlenbeckActionNoise(
 model = DDPG(
     policy = 'MlpPolicy',
     env = env,  
-    buffer_size=int(1e6),
-    learning_rate= linear_schedule(1e-4), 
-    gamma=0.99,
-    tau=1e-3,  
+    buffer_size=100*256,
+    learning_rate= linear_schedule(1e-3), 
+    gamma=0.9,
+    tau=0.01,  
     batch_size=256,    
     action_noise = action_noise,
     # replay_buffer_class=HerReplayBuffer,
@@ -78,7 +78,7 @@ model = DDPG(
     # ),
     # train_freq = (1, "episode"),   
     # gradient_steps =  -1,  
-    learning_starts = 10*max_episode_length, 
+    learning_starts = 100*max_episode_length, 
     verbose = 1, 
     tensorboard_log =  PkgPath.trainingdata(f"tensorboard/{ENV_NAME}")
 ) 
@@ -86,8 +86,8 @@ model = DDPG(
 ########################################################################
 ########################################################################
 ########################################################################
- 
-################### TENSORBOAD ###################
+
+callbackslist = []
 
 # class EnergyCallBack(BaseCallback): 
 #     def __init__(self, env, verbose=0):
@@ -101,20 +101,30 @@ model = DDPG(
 #         self.logger.record('energy/min_tank_level', self.min_tank_level)  # tensorboard
 #         return True
   
-# energy_callback=EnergyCallBack(env)   
-   
-checkpoint_callback = CheckpointCallback(save_freq=1000*max_episode_length, save_path=PkgPath.trainingdata(f"checkpoints/{ENV_NAME}/{AGENT_NAME}"))
-eval_callback = EvalCallback(env, 
-                             best_model_save_path=PkgPath.trainingdata(f'checkpoints/{ENV_NAME}/{AGENT_NAME}/best_model'),
-                             log_path=PkgPath.trainingdata( f'checkpoints/{ENV_NAME}/{AGENT_NAME}/eval_results'), 
-                             eval_freq=50*max_episode_length,
-                             n_eval_episodes=5, 
-                             deterministic=True, 
-                             render=True)  # NB: need to comment "sync_envs_normalization" function in EvalCallback._on_step() method 
+# callbackslist.append(EnergyCallBack(env))
 
-# callbacks = CallbackList([ checkpoint_callback, eval_callback,energy_callback])
-callbacks = CallbackList([ checkpoint_callback, eval_callback])
+# callbackslist.append(
+#     CheckpointCallback(
+#         save_freq = 1000*max_episode_length, 
+#         save_path = PkgPath.trainingdata(f"checkpoints/{ENV_NAME}/{AGENT_NAME}")
+#     )
+# )
 
+callbackslist.append(
+    EvalCallback(
+        env, 
+        best_model_save_path=PkgPath.trainingdata(f'checkpoints/{ENV_NAME}/{AGENT_NAME}/best_model'),
+        log_path=PkgPath.trainingdata( f'checkpoints/{ENV_NAME}/{AGENT_NAME}/eval_results'), 
+        eval_freq=50*max_episode_length,
+        n_eval_episodes=10, 
+        deterministic = True, 
+        render = True
+    )
+)  # NB: need to comment "sync_envs_normalization" function in EvalCallback._on_step() method 
+
+callbacks = CallbackList(callbackslist)
+
+ 
 ########################################################################
 ########################################################################
 ########################################################################

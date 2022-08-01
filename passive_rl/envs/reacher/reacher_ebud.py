@@ -1,5 +1,6 @@
 from cmath import inf
 from faulthandler import is_enabled
+from pickle import TRUE
 import numpy as np
 import math 
 import gym
@@ -13,10 +14,12 @@ class ReacherEBud(gym.Env):
                 energy_tank_init = 7, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 debug = False,
+                testing_mode = False,
                 mjmodel = "reacher_original"
                 ):
         super(ReacherEBud, self).__init__()
 
+        self.testing_mode = testing_mode
         self.debug = debug
         self.t = 0
         self.T = max_episode_length
@@ -41,6 +44,7 @@ class ReacherEBud(gym.Env):
         self.energy_tank_init = energy_tank_init
         self.energy_tank = energy_tank_init  
         self.energy_tank_threshold = energy_tank_threshold
+        self.energy_avaiable = True 
 
         self.energy_joints = [0,0] # list containing the energy going out from the 2 motors
         self.energy_exchanged = 0 # initializing total energy going out at a time step to 0 
@@ -60,21 +64,29 @@ class ReacherEBud(gym.Env):
         self.energy_exchanged = sum(self.energy_joints)
         self.energy_tank -= self.energy_exchanged
 
-        is_empty = self.energy_tank <= self.energy_tank_threshold
-        return is_empty
-  
+        tank_is_empty = self.energy_tank <= self.energy_tank_threshold
+        self.energy_avaiable = not tank_is_empty
+        return tank_is_empty
+
     def step(self, action):  
+  
+        if not self.energy_avaiable: 
+            action *= 0  
 
         # Vanilla Environment Step
         state_new, _reward, _done, _info = self._env.step(action) 
 
         # Energy Budgeting  
-        energy_done = self._update_energy_tank(state_new) 
- 
+        tank_is_empty = self._update_energy_tank(state_new) 
+  
         horizon_done = self.t>=self.T
-        done = energy_done or _done or horizon_done
 
-        if energy_done:
+        if self.testing_mode: 
+            done = _done or horizon_done
+        else:
+            done = tank_is_empty or _done or horizon_done
+ 
+        if tank_is_empty:
             self.energy_stop_ct += 1
          
         info = dict(energy_exchanged = self.energy_exchanged,

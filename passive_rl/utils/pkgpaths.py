@@ -10,6 +10,9 @@ class PkgPath(object):
     def trainingdata(file=""):
         return os.path.join(PkgPath.PACKAGE_PATH, os.pardir, "data/training", file) 
 
+    def testingdata(file=""):
+        return os.path.join(PkgPath.PACKAGE_PATH, os.pardir, "data/testing", file) 
+
     def modelsxml(file=""):
         return os.path.join(PkgPath.PACKAGE_PATH, os.pardir,  "data/xml", file) 
 

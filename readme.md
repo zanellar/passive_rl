@@ -30,6 +30,9 @@ pip install -e .
 ```
 
 
+## Mujoco ##
 
-
-## Test ##
+### Contact Forces bug
+Issue: https://github.com/openai/mujoco-py/pull/487
+Need to modify 'mujoco_py/mjviewer.py' in the conda env as follow:
+https://github.com/openai/mujoco-py/pull/487/commits/ab026c1ff8df54841a549cfd39374b312e8f00dd

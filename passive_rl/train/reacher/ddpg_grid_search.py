@@ -1,4 +1,4 @@
-import os
+import os 
 import gym
 import itertools
 import numpy as np 
@@ -7,6 +7,7 @@ from stable_baselines3.common.callbacks import BaseCallback,CallbackList, EvalCa
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+from stable_baselines3.common.evaluation import evaluate_policy 
 from gym.wrappers.normalize import NormalizeObservation, NormalizeReward
 
 from passive_rl.utils.pkgpaths import PkgPath
@@ -20,8 +21,8 @@ max_episode_length = 50
  
 params = dict(
     gamma = [0.9,0.95,0.99],
-    tau = [1, 1e-2, 1e-3, 1e-4],
-    bsize = [256,64],
+    tau = [1, 1e-1, 1e-2],
+    bsize = [256],
     start = [0, 10*max_episode_length, 100*max_episode_length],
     sigma = [0.2,0.3,0.5],
     # normobs = [True, False]
@@ -31,6 +32,16 @@ keys = params.keys()
 values = (params[key] for key in keys)
 allconfigurations = [dict(zip(keys, combination)) for combination in itertools.product(*values)]
  
+########################################################################
+
+if not os.path.exists(PkgPath.trainingdata()):
+    os.makedirs(PkgPath.trainingdata())
+
+with open(PkgPath.trainingdata("configs.txt"), 'w') as f: 
+    line = "agent,gamma,tau,start,sigma,mean, std" 
+    f.write(line)
+    f.close()
+
 ########################################################################
 ########################################################################
 ########################################################################
@@ -47,8 +58,8 @@ for i,config in enumerate(allconfigurations):
     model = DDPG(
         policy = 'MlpPolicy',
         env = env,  
-        buffer_size=int(1e6),
-        learning_rate= linear_schedule(1e-4), 
+        buffer_size=100*config["bsize"],
+        learning_rate= linear_schedule(1e-3), 
         gamma = config["gamma"],
         tau = config["tau"],  
         batch_size = config["bsize"],    
@@ -60,37 +71,28 @@ for i,config in enumerate(allconfigurations):
  
     ######################################################################## 
 
-    callbackslist = []
+    # callbackslist = []
+
+    # # callbackslist.append(
+    # #     CheckpointCallback(
+    # #         save_freq = 1000*max_episode_length, 
+    # #         save_path = PkgPath.trainingdata(f"checkpoints/{ENV_NAME}/{AGENT_NAME}")
+    # #     )
+    # # )
 
     # callbackslist.append(
-    #     CheckpointCallback(
-    #         save_freq = 1000*max_episode_length, 
-    #         save_path = PkgPath.trainingdata(f"checkpoints/{ENV_NAME}/{AGENT_NAME}")
+    #     EvalCallback(
+    #         env, 
+    #         best_model_save_path = PkgPath.trainingdata(f'checkpoints/{ENV_NAME}/{AGENT_NAME+"_"+str(i+1)}/best_model'),
+    #         log_path = PkgPath.trainingdata( f'checkpoints/{ENV_NAME}/{AGENT_NAME+"_"+str(i+1)}/eval_results'), 
+    #         eval_freq = 100*max_episode_length,
+    #         n_eval_episodes = 10, 
+    #         deterministic = True, 
+    #         render = False
     #     )
-    # )
-
-    callbackslist.append(
-        EvalCallback(
-            env, 
-            best_model_save_path = PkgPath.trainingdata(f'checkpoints/{ENV_NAME}/{AGENT_NAME+"_"+str(i+1)}/best_model'),
-            log_path = PkgPath.trainingdata( f'checkpoints/{ENV_NAME}/{AGENT_NAME+"_"+str(i+1)}/eval_results'), 
-            eval_freq = 50*max_episode_length,
-            n_eval_episodes = 1, 
-            deterministic = True, 
-            render = False
-        )
-    )  # NB: need to comment "sync_envs_normalization" function in EvalCallback._on_step() method 
+    # )  # NB: need to comment "sync_envs_normalization" function in EvalCallback._on_step() method 
  
-    callbacks = CallbackList(callbackslist)
-
-    ######################################################################## 
-
-    if not os.path.exists(PkgPath.trainingdata()):
-        os.makedirs(PkgPath.trainingdata())
-
-    with open(PkgPath.trainingdata("configs.txt"), 'a') as f:
-        f.write("\n"+AGENT_NAME+"_"+str(i+1)+":  "+str(config))
-        f.close()
+    # callbacks = CallbackList(callbackslist)
 
     ######################################################################## 
 
@@ -98,9 +100,24 @@ for i,config in enumerate(allconfigurations):
     model.learn(
         total_timesteps = 1000*max_episode_length, 
         log_interval = 1,  
-        callback = callbacks
+        # callback = callbacks
     )  
 
     env.close()
+
+
+    ######################################################################## 
+
+    mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=30, render=False, deterministic=True)
+   
+    with open(PkgPath.trainingdata("configs.txt"), 'a') as f:  
+        gamma = config["gamma"]
+        tau = config["tau"]
+        start = config["start"]
+        sigma = config["sigma"] 
+        line = f"\n{AGENT_NAME}_{i+1},{gamma},{tau},{start},{sigma},{mean_reward},{std_reward}"  
+        f.write(line)
+        f.close()
+
 
  
