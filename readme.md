@@ -36,3 +36,11 @@ pip install -e .
 Issue: https://github.com/openai/mujoco-py/pull/487
 Need to modify 'mujoco_py/mjviewer.py' in the conda env as follow:
 https://github.com/openai/mujoco-py/pull/487/commits/ab026c1ff8df54841a549cfd39374b312e8f00dd
+
+## Nota Bene
+ 
+if action is velocity we can get the torque as
+
+'torque = (action - self.action)/self._env.dt'
+
+or with a buffer: https://github.com/ARISE-Initiative/robosuite/blob/874ce964640f66440a695582a1375df1aff247ac/robosuite/robots/single_arm.py#L271

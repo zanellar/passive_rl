@@ -63,7 +63,7 @@ class ReacherEBud(gym.Env):
         self.energy_joints = self.action*d_joints  
         self.energy_exchanged = sum(self.energy_joints)
         self.energy_tank -= self.energy_exchanged
-
+        print(self.energy_tank, d_joints[0], self.action[0])
         tank_is_empty = self.energy_tank <= self.energy_tank_threshold
         self.energy_avaiable = not tank_is_empty
         return tank_is_empty
@@ -101,9 +101,10 @@ class ReacherEBud(gym.Env):
 
         return state_new, _reward, done, info
 
-    def reset(self, goal=None): 
-
-        self._env.reset() 
+    def reset(self, goal=None):  
+        print("@"*100) 
+        self.state = self._env.reset() 
+        self.action = np.zeros(self._env.action_space.shape)
         self.t = 0  
         self.energy_tank = self.energy_tank_init
         self.energy_exchanged = 0.0  
