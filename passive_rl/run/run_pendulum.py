@@ -5,8 +5,8 @@ from mjrlenvs.scripts.args.runargsbase import DefaultArgs
 from passive_rl.envs.pendulum.pendulum import PendulumEBud
 from passive_rl.scripts.pkgpaths import PkgPath
 from passive_rl.scripts.energycb import SaveEnergyLogsCallback
-from passive_rl.scripts.energytester import TestEbudAgent
-from mjrlenvs.scripts.eval.tester import TestAgent
+from passive_rl.scripts.energytester import TestRunEBud
+from mjrlenvs.scripts.eval.tester import TestRun
 
 class Args(DefaultArgs): 
 
@@ -17,7 +17,7 @@ class Args(DefaultArgs):
     OUT_TEST_FOLDER = PkgPath.OUT_TEST_FOLDER
     EXPL_EPISODE_HORIZON = 2500 # timesteps 
     EVAL_EPISODE_HORIZON = 500 # timesteps  
-    TRAINING_EPISODES = 250 # episodes
+    TRAINING_EPISODES = 100 # episodes
     EVAL_MODEL_FREQ = 10*EXPL_EPISODE_HORIZON 
     NUM_EVAL_EPISODES = 5
     NUM_EVAL_EPISODES_BEST_MODEL = 5
@@ -65,10 +65,10 @@ class Args(DefaultArgs):
         seed = [17],
         buffer_size = [int(1e6)],
         batch_size = [128],
-        learning_starts = [1*EXPL_EPISODE_HORIZON],
+        learning_starts = [3*EXPL_EPISODE_HORIZON], # 1
         train_freq = [(500,"step") ], 
         gradient_steps = [1000],
-        learning_rate = [ linear_schedule(1e-3) ],
+        learning_rate = [ linear_schedule(3e-3) ], # 1e-3
         gamma = [0.99],
         tau = [1e-3],
         noise = ["gauss"],
@@ -95,9 +95,12 @@ if __name__ == "__main__":
     if x == "t":
         run(Args())
     elif x == "e":
-        tester = TestAgent(Args) 
-        tester.plot(show=False)
-        ebud_tester = TestEbudAgent(Args) 
+        tester = TestRun(Args) 
+        tester.loadmodel("first_trained")
+        tester.infer(num_episodes=3)
+        # tester.plot(show=False)
+
+        ebud_tester = TestRunEBud(Args) 
         ebud_tester.plot(show=False)
     else:
         exit(f"Wrong Selection: {x}")

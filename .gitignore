@@ -51,8 +51,9 @@ Thumbs.db
 # Python compiled bytecode
 *.pyc
 
-# training data 
+# data 
 data/training 
+data/testing 
 
 # setup
 passive_rl.egg-info
