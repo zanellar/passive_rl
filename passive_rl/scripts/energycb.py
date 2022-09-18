@@ -49,9 +49,12 @@ class SaveEnergyLogsCallback(BaseLogCallback):
         _, _, _, _, info = sample[0] 
         energy_tank = info["energy_tank"]
 
-        if self._is_episode_end():
+        if self._is_episode_end(): 
+            self.logger.record('energy_tank/min', self.energy_tank_min)  # -> tensorboard 
             self.training_data["energy_tank_min"].append(self.energy_tank_min) 
+            self.logger.record('energy_tank/max', self.energy_tank_max)  # -> tensorboard 
             self.training_data["energy_tank_max"].append(self.energy_tank_max) 
+            self.logger.record('energy_tank/final', energy_tank)  # -> tensorboard 
             self.training_data["energy_tank_final"].append(energy_tank) 
             self.training_data["num_ep_steps"]= self.num_timesteps-self.num_ep_steps
             self.num_ep_steps = self.num_timesteps

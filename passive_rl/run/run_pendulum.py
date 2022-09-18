@@ -21,7 +21,7 @@ class Args(DefaultArgs):
     EVAL_MODEL_FREQ = 10*EXPL_EPISODE_HORIZON 
     NUM_EVAL_EPISODES = 5
     NUM_EVAL_EPISODES_BEST_MODEL = 5
-    REPETE_TRAINING_TIMES = 10 # times
+    REPETE_TRAINING_TIMES = 20 # times
     SAVE_EVAL_MODEL_WEIGHTS = True 
     SAVE_CHECKPOINTS = True
     EARLY_STOP = False
@@ -65,7 +65,7 @@ class Args(DefaultArgs):
         seed = [17],
         buffer_size = [int(1e6)],
         batch_size = [128],
-        learning_starts = [3*EXPL_EPISODE_HORIZON], # 1
+        learning_starts = [1*EXPL_EPISODE_HORIZON],  
         train_freq = [(500,"step") ], 
         gradient_steps = [1000],
         learning_rate = [ linear_schedule(3e-3) ], # 1e-3
