@@ -11,7 +11,7 @@ class PendulumEBud(EBudBaseEnv):
                 energy_tank_threshold = 0, # minimum energy in the tank   
                 init_joint_config = "random",
                 debug = False,
-                testing_mode = False,
+                energy_terminate = False,
                 folder_path = None,
                 env_name = "pendulum",
                 hard_reset = True
@@ -27,7 +27,7 @@ class PendulumEBud(EBudBaseEnv):
             energy_tank_init = energy_tank_init, # initial energy in the tank
             energy_tank_threshold = energy_tank_threshold, # minimum energy in the tank  
             debug = debug,
-            testing_mode = testing_mode  
+            energy_terminate = energy_terminate  
         )
  
     def get_joints(self):

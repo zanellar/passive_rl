@@ -14,12 +14,12 @@ class ReacherEBud(gym.Env):
                 energy_tank_init = 7, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 debug = False,
-                testing_mode = False,
+                energy_terminate = False,
                 mjmodel = "reacher_original"
                 ):
         super(ReacherEBud, self).__init__()
 
-        self.testing_mode = testing_mode
+        self.energy_terminate = energy_terminate
         self.debug = debug
         self.t = 0
         self.T = max_episode_length
@@ -81,10 +81,10 @@ class ReacherEBud(gym.Env):
   
         horizon_done = self.t>=self.T
 
-        if self.testing_mode: 
-            done = _done or horizon_done
-        else:
+        if self.energy_terminate: 
             done = tank_is_empty or _done or horizon_done
+        else:
+            done = _done or horizon_done
  
         if tank_is_empty:
             self.energy_stop_ct += 1

@@ -10,11 +10,11 @@ class EBudBaseEnv(gym.Env):
                 energy_tank_init = 7, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 debug = False,
-                testing_mode = False 
+                energy_terminate = False 
                 ):
         super(EBudBaseEnv, self).__init__()
 
-        self.testing_mode = testing_mode
+        self.energy_terminate = energy_terminate
         self.debug = debug 
 
         ################# Init Learning Environment ####################
@@ -81,10 +81,10 @@ class EBudBaseEnv(gym.Env):
         # Energy Budgeting  
         tank_is_empty = self._update_energy_tank() 
      
-        if self.testing_mode: 
-            done = _done 
+        if self.energy_terminate: 
+            done = tank_is_empty or  _done 
         else:
-            done = tank_is_empty or _done  
+            done = _done  
  
         if tank_is_empty:
             self.energy_stop_ct += 1
