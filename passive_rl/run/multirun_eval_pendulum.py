@@ -1,8 +1,7 @@
 
 from passive_rl.scripts.pkgpaths import PkgPath 
-from passive_rl.scripts.energytester import TestMultiRunEBud, TestRunEBud
-from mjrlenvs.scripts.eval.tester import TestRun
-from passive_rl.scripts.plotenergydata import *
+from passive_rl.scripts.tester import TestMultiRunEBud, TestRunEBud
+from mjrlenvs.scripts.eval.tester import TestRun 
 
 
 tester = TestMultiRunEBud()

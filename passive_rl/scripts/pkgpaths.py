@@ -9,4 +9,5 @@ class PkgPath():
     ENV_DESC_FOLDER = os.path.join(_PACKAGE_PATH, os.pardir, "data", "envdata")  
     OUT_TRAIN_FOLDER = os.path.join(_PACKAGE_PATH, os.pardir, "data", "training")  
     OUT_TEST_FOLDER = os.path.join(_PACKAGE_PATH, os.pardir, "data", "testing")  
+    PLOT_FOLDER = os.path.join(_PACKAGE_PATH, os.pardir, "data", "plots")  
   

@@ -54,6 +54,7 @@ Thumbs.db
 # data 
 data/training 
 data/testing 
+data/plots 
 
 # setup
 passive_rl.egg-info

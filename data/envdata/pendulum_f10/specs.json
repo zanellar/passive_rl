@@ -1,0 +1,14 @@
+{
+    "_info": "pendulum", 
+    "states": {
+        "q":    {"id": "joint", "type": "joint", "var":"qpos", "dim": 1},
+        "dq":   {"id": "joint", "type": "joint", "var":"qvel", "dim": 1}
+    },
+    "actions": { 
+        "tau": {"id": "motor"}
+    },
+    "environment": {
+        "fixed_frame": null, 
+        "control_frequency": 50
+    } 
+}

@@ -5,7 +5,7 @@ from mjrlenvs.scripts.args.runargsbase import DefaultArgs
 from passive_rl.envs.pendulum.pendulum import PendulumEBud
 from passive_rl.scripts.pkgpaths import PkgPath
 from passive_rl.scripts.energycb import SaveEnergyLogsCallback
-from passive_rl.scripts.energytester import TestRunEBud
+from passive_rl.scripts.tester import TestRunEBud
 from mjrlenvs.scripts.eval.tester import TestRun
 
 class Args(DefaultArgs): 
@@ -50,7 +50,8 @@ class Args(DefaultArgs):
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 init_joint_config = "random",
                 folder_path = PkgPath.ENV_DESC_FOLDER,
-                env_name = ENVIRONMENT
+                env_name = ENVIRONMENT,
+                hard_reset = False
             )
 
     NORMALIZE_ENV = dict(training=True, norm_obs=True, norm_reward=True, clip_obs=10, clip_reward=10) 
@@ -94,13 +95,10 @@ if __name__ == "__main__":
     x = input("Train[t] or Eval[e]? ")
     if x == "t":
         run(Args())
-    elif x == "e":
-        tester = TestRun(Args) 
-        tester.loadmodel("first_trained")
-        tester.infer(num_episodes=3)
-        # tester.plot(show=False)
-
-        ebud_tester = TestRunEBud(Args) 
-        ebud_tester.plot(show=False)
+    elif x == "e":  
+        tester = TestRunEBud(Args)  
+        returns = tester.eval_returns_run(n_eval_episodes=10, save=True)
+        emins = tester.eval_emin_run(n_eval_episodes=10, save=True)
+        print(emins)
     else:
         exit(f"Wrong Selection: {x}")

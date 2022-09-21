@@ -13,14 +13,16 @@ class PendulumEBud(EBudBaseEnv):
                 debug = False,
                 testing_mode = False,
                 folder_path = None,
-                env_name = "pendulum"
+                env_name = "pendulum",
+                hard_reset = True
                 ):
         super(PendulumEBud, self).__init__(
             env = Pendulum(
                 env_name = env_name, 
                 folder_path = folder_path,
                 max_episode_length = max_episode_length, 
-                init_joint_config = init_joint_config
+                init_joint_config = init_joint_config,
+                hard_reset = hard_reset
             ),
             energy_tank_init = energy_tank_init, # initial energy in the tank
             energy_tank_threshold = energy_tank_threshold, # minimum energy in the tank  
