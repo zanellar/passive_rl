@@ -33,11 +33,10 @@ class Args(DefaultArgs):
     ########################## ENVIRONMENT ######################################################
 
     ENVIRONMENT = "pendulum_f001" 
-    ENERGY_TANK_INIT = 1000
 
     ENV_EXPL = PendulumEBud(
-                max_episode_length = EXPL_EPISODE_HORIZON,  
-                energy_tank_init = ENERGY_TANK_INIT, # initial energy in the tank
+                max_episode_length=EXPL_EPISODE_HORIZON,  
+                energy_tank_init = 1000, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 init_joint_config = "random",
                 folder_path = PkgPath.ENV_DESC_FOLDER,
@@ -45,8 +44,8 @@ class Args(DefaultArgs):
             )
 
     ENV_EVAL = PendulumEBud(
-                max_episode_length = EVAL_EPISODE_HORIZON, 
-                energy_tank_init = ENERGY_TANK_INIT, # initial energy in the tank
+                max_episode_length=EVAL_EPISODE_HORIZON, 
+                energy_tank_init = 1000, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 init_joint_config = "random",
                 folder_path = PkgPath.ENV_DESC_FOLDER,
@@ -85,20 +84,4 @@ class Args(DefaultArgs):
         target_update_interval = [5],   
     )
  
-
-############################################################################################
-############################################################################################
-############################################################################################
-import os
-
-if __name__ == "__main__":
-    x = input("Train[t] or Eval[e]? ")
-    if x == "t":
-        run(Args())
-    elif x == "e":  
-        tester = TestRunEBud(Args)  
-        # returns = tester.eval_returns_run(n_eval_episodes=10, save=True)
-        emin, mean_emin, std_emin = tester.eval_emin_run(n_eval_episodes=10, save=True)
-        print(Args.ENERGY_TANK_INIT-emin,Args.ENERGY_TANK_INIT-mean_emin,std_emin )
-    else:
-        exit(f"Wrong Selection: {x}")
+ 
