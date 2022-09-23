@@ -65,10 +65,10 @@ class PlotterEBud(Plotter):
             hue = "Runs",
             estimator = np.mean,
             errorbar='sd'
-        )   
-        exit(data)
-        ax.set_xticklabels(range())
-        ax.set_xlabel('Steps') 
+        )    
+        
+        # ax.set_xticklabels(range())
+        # ax.set_xlabel('Steps') 
         ax.legend(loc="lower center", bbox_to_anchor=(.5, 1), ncol=len(labels), frameon=False, labels=labels)
 
         if save:
@@ -81,7 +81,7 @@ class PlotterEBud(Plotter):
     #     self.testing_output_folder_path = os.path.join(self.out_test_folder, env_name, run_id) 
     #     #TODO
  
-    def plot_stat_test_multirun_energy(self, env_run_ids, labels=[], save=True, show=True, plot_name=None, type="box"): 
+    def plot_stat_test_multirun_energy(self, env_run_ids, labels=[], save=True, show=True, plot_name=None, type="hist"): 
         if plot_name == None:
             plot_name = str(len(env_run_ids))
         run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
@@ -109,6 +109,8 @@ class PlotterEBud(Plotter):
                 orient = "v"
             )
             ax.set_xticklabels(labels)
+ 
+            
  
         if save:
             plt.savefig(save_path, bbox_inches='tight', format="pdf") 

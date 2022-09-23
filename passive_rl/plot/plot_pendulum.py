@@ -13,7 +13,7 @@ plotter = PlotterEBud(out_train_folder=out_train_folder, out_test_folder=out_tes
 
 env_run_ids=["pendulum_f001/etank1000", "pendulum_f01/etank1000"]
 # plotter.plot_avg_train_multirun_energy(env_run_ids=env_run_ids, show=True)
-plotter.plot_avg_train_multirun_returns(env_run_ids=env_run_ids, show=True)
+# plotter.plot_avg_train_multirun_returns(env_run_ids=env_run_ids, show=True)
 env_run_ids=["pendulum_f001/etank1000","pendulum_f001/etank1000bis" ]
-# plotter.plot_stat_test_multirun_energy(env_run_ids=env_run_ids, show=True)
+plotter.plot_stat_test_multirun_energy(env_run_ids=env_run_ids, show=True)
 # plotter.plot_boxes_test_multirun_returns(env_run_ids=env_run_ids, show=False)

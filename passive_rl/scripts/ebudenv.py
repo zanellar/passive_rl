@@ -29,8 +29,8 @@ class EBudBaseEnv(gym.Env):
         self.action_space = self.env.action_space 
 
         # Initialize    
-        self.obs = self.env.get_obs()  
-        self.action = np.zeros(self.env.action_space.shape)
+        self.obs = None
+        self.action = None
         self.reward = None 
         self.done = False
         self.info = {}
@@ -113,3 +113,40 @@ class EBudBaseEnv(gym.Env):
    
     def get_sample(self):
         return self.obs, self.action, self.reward, self.done, self.info
+
+
+
+from gym import spaces
+class EBudAwEnv(EBudBaseEnv): 
+
+    def __init__(self,    
+                env, 
+                energy_tank_init = 7, # initial energy in the tank
+                energy_tank_threshold = 0, # minimum energy in the tank  
+                debug = False,
+                energy_terminate = False 
+                ):
+  
+        obs_dim = env.observation_space.shape[0]+1
+        env.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(obs_dim,), dtype=np.float32)    
+        env.obs = np.zeros(env.observation_space.shape)
+        
+        super(EBudAwEnv, self).__init__( 
+            env = env, 
+            energy_tank_init = energy_tank_init, # initial energy in the tank
+            energy_tank_threshold = energy_tank_threshold, # minimum energy in the tank  
+            debug = debug,
+            energy_terminate = energy_terminate 
+        )
+           
+    def reset(self, goal=None ):  
+        _obs = super(EBudAwEnv, self).reset()
+        self.obs = np.concatenate([_obs, [self.energy_tank]])
+        return self.obs
+
+    def step(self, action):    
+        _obs, _reward, _done, _info = super(EBudAwEnv, self).step(action)
+        self.obs = np.concatenate([_obs, [self.energy_tank]])  
+        self.reward = self.upgrade_reward(_reward)
+        return self.obs, self.reward, self.done, self.info
+ 

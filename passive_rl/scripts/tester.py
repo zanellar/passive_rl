@@ -63,6 +63,6 @@ class TestRunEBud(TestRun):
             with open(file_path, 'w') as f:
                 json.dump(data, f) 
          
-        return np.amin(emin_full_list), np.mean(emin_full_list), np.std(emin_full_list) 
+        return np.amin(emin_full_list), np.amax(emin_full_list), np.mean(emin_full_list), np.std(emin_full_list) 
 
      
