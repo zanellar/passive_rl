@@ -23,7 +23,9 @@ class ErrorsCallback(BaseLogCallback):
     def _on_step(self) -> bool: 
         sample = self.training_env.env_method("get_sample") 
         obs, _, _, _, _ = sample[0] 
-        sin_pos, cos_pos,  tanh_vel = obs 
+        sin_pos = obs[0] 
+        cos_pos = obs[1] 
+        tanh_vel = obs[2]  
         err_pos = abs(1. - sin_pos)
         self.err_pos_tot_episode += err_pos 
   

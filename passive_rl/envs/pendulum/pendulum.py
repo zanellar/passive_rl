@@ -75,7 +75,7 @@ class PendulumEBudAw(EBudAwEnv):
     def get_torques(self):
         return self.action
 
-    # def upgrade_reward(self,reward):
-    #     reward += 0.05*(self.energy_tank-self.energy_tank_init)
-    #     return 
+    def upgrade_reward(self,reward):  
+        reward += 0.5*(self.energy_tank-self.energy_tank_init)
+        return reward
             

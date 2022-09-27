@@ -127,7 +127,7 @@ class EBudAwEnv(EBudBaseEnv):
                 energy_terminate = False 
                 ):
   
-        obs_dim = env.observation_space.shape[0]+1
+        obs_dim = env.observation_space.shape[0]+2
         env.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(obs_dim,), dtype=np.float32)    
         env.obs = np.zeros(env.observation_space.shape)
         
@@ -138,15 +138,23 @@ class EBudAwEnv(EBudBaseEnv):
             debug = debug,
             energy_terminate = energy_terminate 
         )
+
+    def _update_obs(self, old_obs):
+        add_obs = [
+            self.energy_tank_init - self.energy_tank,
+            self.energy_exchanged
+        ]
+        new_obs = np.concatenate([old_obs, add_obs])
+        return new_obs
            
     def reset(self, goal=None ):  
         _obs = super(EBudAwEnv, self).reset()
-        self.obs = np.concatenate([_obs, [self.energy_tank]])
+        self.obs = self._update_obs(_obs)
         return self.obs
 
     def step(self, action):    
         _obs, _reward, _done, _info = super(EBudAwEnv, self).step(action)
-        self.obs = np.concatenate([_obs, [self.energy_tank]])  
+        self.obs = self._update_obs(_obs)
         self.reward = self.upgrade_reward(_reward)
         return self.obs, self.reward, self.done, self.info
  
