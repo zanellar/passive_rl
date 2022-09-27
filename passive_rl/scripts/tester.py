@@ -18,7 +18,7 @@ class TestRunEBud(TestRun):
     def __init__(self, run_args, render=None) -> None:
         super().__init__(run_args, render=render) 
     
-    def eval_emin_model(self, model_id="random", n_eval_episodes=30, render=False, save=False):  # TODO call loadmodel inside the method
+    def eval_emin_model(self, model_id="random", n_eval_episodes=30, render=False, save=False): 
         self._loadmodel(model_id) 
         obs = self.env.reset() 
         emin = None

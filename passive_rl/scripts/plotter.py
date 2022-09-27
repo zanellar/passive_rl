@@ -55,7 +55,7 @@ class PlotterEBud(Plotter):
 
         data = df_multiruns_episodes_energy(run_paths_list=run_paths_list, smooth=True, etype="min") 
         save_path = os.path.join(self.save_multirun_training_plots_path, f"emin_train_multirun_{plot_name}.pdf")
-
+ 
         plt.figure() 
         sns.set(style="darkgrid", font_scale=1.5) 
         ax = sns.lineplot(
@@ -63,13 +63,13 @@ class PlotterEBud(Plotter):
             x =  "Episodes", 
             y = "Energy",  
             hue = "Runs",
-            estimator = np.mean,
-            errorbar='sd'
+            # estimator = np.mean,
+            # errorbar='sd'
         )    
         
         # ax.set_xticklabels(range())
         # ax.set_xlabel('Steps') 
-        ax.legend(loc="lower center", bbox_to_anchor=(.5, 1), ncol=len(labels), frameon=False, labels=labels)
+        # ax.legend(loc="lower center", bbox_to_anchor=(.5, 1), ncol=len(labels), frameon=False, labels=labels)
 
         if save:
             plt.savefig(save_path, bbox_inches='tight', format="pdf") 
@@ -86,13 +86,13 @@ class PlotterEBud(Plotter):
             plot_name = str(len(env_run_ids))
         run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
         
-        data = df_test_multirun_energy(run_paths_list=run_paths_list)
-        save_path = os.path.join(self.save_multirun_training_plots_path, f"emin_test_multirun_{plot_name}.pdf")
+        data = df_test_multirun_energy(run_paths_list=run_paths_list) 
+        save_path = os.path.join(self.save_multirun_testing_plots_path, f"emin_test_multirun_{plot_name}.pdf")
 
         plt.figure() 
         sns.set(style="darkgrid", font_scale=1.5) 
-
         if type == "hist":
+            exit(data)
             ax = sns.histplot(
                 data = data, 
                 x = "Energy", 
@@ -109,8 +109,7 @@ class PlotterEBud(Plotter):
                 orient = "v"
             )
             ax.set_xticklabels(labels)
- 
-            
+  
  
         if save:
             plt.savefig(save_path, bbox_inches='tight', format="pdf") 
