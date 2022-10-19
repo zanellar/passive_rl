@@ -36,38 +36,36 @@ def train_and_test(x, test_id=""):
 
 ################################################################################################ 
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_inf",
-#         ENVIRONMENT = "pendulum_f1",
-#         ENERGY_TANK_INIT = 1000,
-#         ENERGY_AWARE = False
-#     ),
-#     test_id="inf"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_inf",
+        ENVIRONMENT = "pendulum_f1",
+        ENERGY_TANK_INIT = 1000,
+        ENERGY_AWARE = False
+    ),
+    test_id="inf"
+)
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_inf",
-#         ENVIRONMENT = "pendulum_f0",
-#         ENERGY_TANK_INIT = 1000,
-#         ENERGY_AWARE = False  
-#     ),
-#     test_id="inf"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_inf",
+        ENVIRONMENT = "pendulum_f0",
+        ENERGY_TANK_INIT = 1000,
+        ENERGY_AWARE = False  
+    ),
+    test_id="inf"
+)
 
-# min_emin = train_and_test(
-#     dict(
-#         RUN_ID = "etank_inf",
-#         ENVIRONMENT = "pendulum_f001",
-#         ENERGY_TANK_INIT = 1000,
-#         ENERGY_AWARE = False  
-#     ),
-#     test_id="inf"
-# )
-
-min_emin = 3.234176997037139
-
+min_emin = train_and_test(
+    dict(
+        RUN_ID = "etank_inf",
+        ENVIRONMENT = "pendulum_f001",
+        ENERGY_TANK_INIT = 1000,
+        ENERGY_AWARE = False  
+    ),
+    test_id="inf"
+)
+ 
 test(
     x = dict(
             RUN_ID = "etank_inf",
@@ -78,25 +76,25 @@ test(
     test_id="min"
 )
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_min",
-#         ENVIRONMENT = "pendulum_f001",
-#         ENERGY_TANK_INIT = min_emin,
-#         ENERGY_AWARE = False  
-#     ),
-#     test_id="min"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_min",
+        ENVIRONMENT = "pendulum_f001",
+        ENERGY_TANK_INIT = min_emin,
+        ENERGY_AWARE = False  
+    ),
+    test_id="min"
+)
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_min08",
-#         ENVIRONMENT = "pendulum_f001",
-#         ENERGY_TANK_INIT = min_emin*0.8,
-#         ENERGY_AWARE = False  
-#     ),
-#     test_id="min08"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_min08",
+        ENVIRONMENT = "pendulum_f001",
+        ENERGY_TANK_INIT = min_emin*0.8,
+        ENERGY_AWARE = False  
+    ),
+    test_id="min08"
+)
 
 # train_and_test(
 #     dict(
@@ -108,25 +106,25 @@ test(
 #     test_id="min06"
 # )
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_min03",
-#         ENVIRONMENT = "pendulum_f001",
-#         ENERGY_TANK_INIT = min_emin*0.3,
-#         ENERGY_AWARE = False  
-#     ),
-#     test_id="min03"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_min03",
+        ENVIRONMENT = "pendulum_f001",
+        ENERGY_TANK_INIT = min_emin*0.3,
+        ENERGY_AWARE = False  
+    ),
+    test_id="min03"
+)
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_min08eaw",
-#         ENVIRONMENT = "pendulum_f001",
-#         ENERGY_TANK_INIT = min_emin*0.8,
-#         ENERGY_AWARE = True  
-#     ),
-#     test_id="min08eaw"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_min08eaw",
+        ENVIRONMENT = "pendulum_f001",
+        ENERGY_TANK_INIT = min_emin*0.8,
+        ENERGY_AWARE = True  
+    ),
+    test_id="min08eaw"
+)
 
 # train_and_test(
 #     dict(
@@ -138,13 +136,13 @@ test(
 #     test_id="min06eaw"
 # )
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_min03eaw",
-#         ENVIRONMENT = "pendulum_f001",
-#         ENERGY_TANK_INIT = min_emin*0.3,
-#         ENERGY_AWARE = True  
-#     ),
-#     test_id="min03eaw"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_min03eaw",
+        ENVIRONMENT = "pendulum_f001",
+        ENERGY_TANK_INIT = min_emin*0.3,
+        ENERGY_AWARE = True  
+    ),
+    test_id="min03eaw"
+)
  
