@@ -15,8 +15,12 @@ from passive_rl.scripts.pkgpaths import PkgPath
 
 class TestRunEBud(TestRun):
 
-    def __init__(self, run_args, render=None) -> None:
-        super().__init__(run_args, render=render) 
+    def __init__(self, run_args, render=None, test_id="" ) -> None:
+        super().__init__(run_args, render=render)  
+        test_id = "_"+test_id if test_id != "" else test_id
+        new_testing_output_folder_path = self.testing_output_folder_path + test_id  
+        os.rename(src=self.testing_output_folder_path, dst=new_testing_output_folder_path)
+        self.testing_output_folder_path = new_testing_output_folder_path
     
     def eval_emin_model(self, model_id="random", n_eval_episodes=30, render=False, save=False): 
         self._loadmodel(model_id) 
@@ -44,7 +48,7 @@ class TestRunEBud(TestRun):
 
         return emin_list 
 
-    def eval_emin_run(self, n_eval_episodes=30, render=False, save=False, plot=False):  
+    def eval_emin_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname=""):  
         data = {}
         run_training_logs_folder_path = os.path.join(self.training_output_folder_path,"logs")
         emin_full_list = []

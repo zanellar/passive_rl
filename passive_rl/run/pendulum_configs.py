@@ -13,10 +13,10 @@ class Args(DefaultArgs):
     OUT_TEST_FOLDER = PkgPath.OUT_TEST_FOLDER
 
     REPETE_TRAINING_TIMES = 1 # times
-    TRAINING_EPISODES = 3#200 # episodes
-    EXPL_EPISODE_HORIZON = 500#2500 # timesteps 
-    EVAL_EPISODE_HORIZON = 100#500 # timesteps  
-    EVAL_MODEL_FREQ = 1#20 # episodes
+    TRAINING_EPISODES = 200 # episodes
+    EXPL_EPISODE_HORIZON = 2500 # timesteps 
+    EVAL_EPISODE_HORIZON = 500 # timesteps  
+    EVAL_MODEL_FREQ = 20 # episodes
     NUM_EVAL_EPISODES = 1
     NUM_EVAL_EPISODES_BEST_MODEL = 1
     EARLY_STOP = False 
