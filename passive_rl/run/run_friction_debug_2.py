@@ -10,6 +10,7 @@ from passive_rl.scripts.errorscb import ErrorsCallback
   
 from mjrlenvs.envrl.pendulum import Pendulum  
 from passive_rl.scripts.ebudenv import EBudBaseEnv,EBudAwEnv
+from passive_rl.envs.pendulum.pendulum import PendulumEBudAw
  
 class PendulumEBud(EBudBaseEnv): 
 
@@ -99,7 +100,7 @@ class Args(DefaultArgs):
   
     AGENT = "SAC"  
     AGENT_PARAMS = dict(
-        seed = [17,29,67,157,109,211,277,331,359,419],
+        seed = [17,29,67,157,109 ], #,211,277,331,359,419
         buffer_size = [int(1e6)],
         batch_size = [256],
         learning_starts = [1*EXPL_EPISODE_HORIZON],  
@@ -129,7 +130,7 @@ class Args(DefaultArgs):
                             max_episode_length = Args.EXPL_EPISODE_HORIZON,  
                             energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                             energy_tank_threshold = 0, # minimum energy in the tank  
-                            init_joint_config = [0],
+                            init_joint_config = [-1.57],
                             folder_path = PkgPath.ENV_DESC_FOLDER,
                             env_name = Args.ENVIRONMENT
                         ) 
@@ -137,7 +138,7 @@ class Args(DefaultArgs):
                             max_episode_length = Args.EVAL_EPISODE_HORIZON,  
                             energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                             energy_tank_threshold = 0, # minimum energy in the tank  
-                            init_joint_config = [0],
+                            init_joint_config = [-1.57],
                             folder_path = PkgPath.ENV_DESC_FOLDER,
                             env_name = Args.ENVIRONMENT
                         )    
@@ -147,7 +148,7 @@ class Args(DefaultArgs):
                         max_episode_length = Args.EXPL_EPISODE_HORIZON,  
                         energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                         energy_tank_threshold = 0, # minimum energy in the tank  
-                        init_joint_config = [0],
+                        init_joint_config = [-1.57],
                         folder_path = PkgPath.ENV_DESC_FOLDER,
                         env_name =Args.ENVIRONMENT
                     )
@@ -156,7 +157,7 @@ class Args(DefaultArgs):
                         max_episode_length = Args.EVAL_EPISODE_HORIZON, 
                         energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                         energy_tank_threshold = 0, # minimum energy in the tank  
-                        init_joint_config = [0],
+                        init_joint_config = [-1.57],
                         folder_path = PkgPath.ENV_DESC_FOLDER,
                         env_name = Args.ENVIRONMENT,
                         hard_reset = False
