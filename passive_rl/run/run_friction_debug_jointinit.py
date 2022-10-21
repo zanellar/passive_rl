@@ -22,13 +22,13 @@ class Args(DefaultArgs):
     OUT_TEST_FOLDER = PkgPath.OUT_TEST_FOLDER
 
     REPETE_TRAINING_TIMES = 1 # times
-    TRAINING_EPISODES = 200 # episodes
+    TRAINING_EPISODES = 100 # episodes
     EXPL_EPISODE_HORIZON = 2500 # timesteps 
     EVAL_EPISODE_HORIZON = 500 # timesteps  
     EVAL_MODEL_FREQ = 20 # episodes
     NUM_EVAL_EPISODES = 1
     NUM_EVAL_EPISODES_BEST_MODEL = 1
-    EARLY_STOP = False 
+    EARLY_STOP = False  
 
     SAVE_EVAL_MODEL_WEIGHTS = True 
     SAVE_CHECKPOINTS = True
@@ -124,8 +124,8 @@ def test(x=None, test_id=""):
 
 def train_and_test(x, test_id=""): 
     Args.set(x) 
-    run(Args) 
-    min_emin = test(Args, test_id=test_id) 
+    run(Args)  
+    min_emin = test(x, test_id=test_id) 
  
     with open(run_results_file_path, 'a') as file: 
         line = f"\n {Args.RUN_ID} {Args.ENVIRONMENT}, {Args.ENV_EXPL.energy_tank_init}, {min_emin}"   
@@ -136,19 +136,19 @@ def train_and_test(x, test_id=""):
 
 ################################################################################################ 
 
-train_and_test(
-    dict(
-        RUN_ID = "etank_inf",
-        ENVIRONMENT = "pendulum_f1",
-        ENERGY_TANK_INIT = 1000,
-        ENERGY_AWARE = False
-    ),
-    test_id="inf"
-)
+# train_and_test(
+#     dict(
+#         RUN_ID = "etank_inf_1",
+#         ENVIRONMENT = "pendulum_f1",
+#         ENERGY_TANK_INIT = 1000,
+#         ENERGY_AWARE = False
+#     ),
+#     test_id="inf"
+# )
 
 train_and_test(
     dict(
-        RUN_ID = "etank_inf",
+        RUN_ID = "etank_inf_1",
         ENVIRONMENT = "pendulum_f0",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False  
@@ -158,7 +158,7 @@ train_and_test(
 
 train_and_test(
     dict(
-        RUN_ID = "etank_inf",
+        RUN_ID = "etank_inf_1",
         ENVIRONMENT = "pendulum_f001",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False  

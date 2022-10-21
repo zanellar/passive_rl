@@ -67,7 +67,7 @@ class EBudBaseEnv(gym.Env):
         self.energy_tank -= self.energy_exchanged 
         tank_is_empty = self.energy_tank <= self.energy_tank_threshold
         self.energy_avaiable = not tank_is_empty
-        self.joints = new_joints
+        self.joints = new_joints 
         return tank_is_empty
 
     def step(self, action):  
@@ -77,7 +77,7 @@ class EBudBaseEnv(gym.Env):
 
         # Vanilla Environment Step
         _obs, _reward, _done, _info = self.env.step(action) 
-  
+
         # Energy Budgeting  
         tank_is_empty = self._update_energy_tank() 
      
@@ -85,7 +85,7 @@ class EBudBaseEnv(gym.Env):
             done = tank_is_empty or  _done 
         else:
             done = _done  
- 
+  
         if tank_is_empty:
             self.energy_stop_ct += 1
          
@@ -101,7 +101,7 @@ class EBudBaseEnv(gym.Env):
 
         return self.obs, self.reward, self.done, self.info
 
-    def reset(self, goal=None):   
+    def reset(self, goal=None):    
         self.obs = self.env.reset() 
         self.action = np.zeros(self.env.action_space.shape) 
         self.energy_tank = self.energy_tank_init

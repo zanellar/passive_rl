@@ -40,8 +40,7 @@ class PendulumEBud(EBudBaseEnv):
         )
  
     def get_joints(self):
-        obs = self.env.get_obs()
-        joints = np.arcsin(obs[0])
+        joints = self.env.sim.get_state()[0]
         return joints
 
     def get_torques(self):
@@ -65,7 +64,7 @@ class PendulumEBud(EBudBaseEnv):
         d_joints = new_joints - old_joints
         self.energy_joints = torques*d_joints  
         self.energy_exchanged = sum(self.energy_joints)
-        if self.energy_exchanged <=0: 
+        if self.energy_exchanged >=0: 
             self.energy_tank -= self.energy_exchanged 
         tank_is_empty = self.energy_tank <= self.energy_tank_threshold
         self.energy_avaiable = not tank_is_empty
@@ -84,7 +83,7 @@ class Args(DefaultArgs):
     OUT_TEST_FOLDER = PkgPath.OUT_TEST_FOLDER
 
     REPETE_TRAINING_TIMES = 1 # times
-    TRAINING_EPISODES = 200 # episodes
+    TRAINING_EPISODES = 100 # episodes
     EXPL_EPISODE_HORIZON = 2500 # timesteps 
     EVAL_EPISODE_HORIZON = 500 # timesteps  
     EVAL_MODEL_FREQ = 20 # episodes
@@ -187,7 +186,7 @@ def test(x=None, test_id=""):
 def train_and_test(x, test_id=""): 
     Args.set(x) 
     run(Args) 
-    min_emin = test(Args, test_id=test_id) 
+    min_emin = test(x, test_id=test_id) 
  
     with open(run_results_file_path, 'a') as file: 
         line = f"\n {Args.RUN_ID} {Args.ENVIRONMENT}, {Args.ENV_EXPL.energy_tank_init}, {min_emin}"   
@@ -200,7 +199,7 @@ def train_and_test(x, test_id=""):
 
 train_and_test(
     dict(
-        RUN_ID = "etank_inf",
+        RUN_ID = "etank_inf_2",
         ENVIRONMENT = "pendulum_f1",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False
@@ -210,7 +209,7 @@ train_and_test(
 
 train_and_test(
     dict(
-        RUN_ID = "etank_inf",
+        RUN_ID = "etank_inf_2",
         ENVIRONMENT = "pendulum_f0",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False  
@@ -220,7 +219,7 @@ train_and_test(
 
 train_and_test(
     dict(
-        RUN_ID = "etank_inf",
+        RUN_ID = "etank_inf_2",
         ENVIRONMENT = "pendulum_f001",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False  

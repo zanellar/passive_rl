@@ -1,4 +1,5 @@
  
+from ntpath import join
 import numpy as np 
 from mjrlenvs.envrl.pendulum import Pendulum  
 from passive_rl.scripts.ebudenv import EBudBaseEnv,EBudAwEnv
@@ -30,9 +31,10 @@ class PendulumEBud(EBudBaseEnv):
             energy_terminate = energy_terminate  
         )
  
-    def get_joints(self):
-        obs = self.env.get_obs()
-        joints = np.arcsin(obs[0])
+    def get_joints(self): 
+        joints = self.env.sim.get_state()[0]
+        # sin_q, cos_q, _ = self.env.get_obs()
+        # joints = np.arcsin(sin_q) if cos_q>=0 else -np.pi-np.arcsin(sin_q) 
         return joints
 
     def get_torques(self):

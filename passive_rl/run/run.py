@@ -25,7 +25,7 @@ def test(x=None, test_id=""):
 def train_and_test(x, test_id=""): 
     Args.set(x) 
     run(Args) 
-    min_emin = test(Args, test_id=test_id) 
+    min_emin = test(x, test_id=test_id) 
  
     with open(run_results_file_path, 'a') as file: 
         line = f"\n {Args.RUN_ID} {Args.ENVIRONMENT}, {Args.ENV_EXPL.energy_tank_init}, {min_emin}"   
