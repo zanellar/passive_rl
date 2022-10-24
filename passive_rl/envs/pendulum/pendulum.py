@@ -32,7 +32,7 @@ class PendulumEBud(EBudBaseEnv):
         )
  
     def get_joints(self): 
-        joints = self.env.sim.get_state()[0]
+        joints = np.array([self.env.sim.get_state()[0]])
         # sin_q, cos_q, _ = self.env.get_obs()
         # joints = np.arcsin(sin_q) if cos_q>=0 else -np.pi-np.arcsin(sin_q) 
         return joints

@@ -53,13 +53,14 @@ class Args(DefaultArgs):
         Args.RUN_ID = args["RUN_ID"]
         Args.ENVIRONMENT = args["ENVIRONMENT"] 
         Args.ENERGY_TANK_INIT = args["ENERGY_TANK_INIT"]
+        Args.INIT_JOINT_CONFIG = args["INIT_JOINT_CONFIG"]
         if args["ENERGY_AWARE"]:
             Args.NORMALIZE_ENV = dict(training=True, norm_obs=True, norm_reward=True, clip_obs=np.inf, clip_reward=10) 
             Args.ENV_EXPL = PendulumEBudAw(
                             max_episode_length = Args.EXPL_EPISODE_HORIZON,  
                             energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                             energy_tank_threshold = 0, # minimum energy in the tank  
-                            init_joint_config = "random",
+                            init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
                             folder_path = PkgPath.ENV_DESC_FOLDER,
                             env_name = Args.ENVIRONMENT
                         ) 
@@ -67,7 +68,7 @@ class Args(DefaultArgs):
                             max_episode_length = Args.EVAL_EPISODE_HORIZON,  
                             energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                             energy_tank_threshold = 0, # minimum energy in the tank  
-                            init_joint_config = "random",
+                            init_joint_config = Args.INIT_JOINT_CONFIG,# [-1.57] or "random"
                             folder_path = PkgPath.ENV_DESC_FOLDER,
                             env_name = Args.ENVIRONMENT
                         )    
@@ -77,7 +78,7 @@ class Args(DefaultArgs):
                         max_episode_length = Args.EXPL_EPISODE_HORIZON,  
                         energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                         energy_tank_threshold = 0, # minimum energy in the tank  
-                        init_joint_config = "random",
+                        init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
                         folder_path = PkgPath.ENV_DESC_FOLDER,
                         env_name =Args.ENVIRONMENT
                     )
@@ -86,7 +87,7 @@ class Args(DefaultArgs):
                         max_episode_length = Args.EVAL_EPISODE_HORIZON, 
                         energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                         energy_tank_threshold = 0, # minimum energy in the tank  
-                        init_joint_config = "random",
+                        init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
                         folder_path = PkgPath.ENV_DESC_FOLDER,
                         env_name = Args.ENVIRONMENT,
                         hard_reset = False

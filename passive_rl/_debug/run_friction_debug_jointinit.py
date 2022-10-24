@@ -136,15 +136,15 @@ def train_and_test(x, test_id=""):
 
 ################################################################################################ 
 
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_inf_1",
-#         ENVIRONMENT = "pendulum_f1",
-#         ENERGY_TANK_INIT = 1000,
-#         ENERGY_AWARE = False
-#     ),
-#     test_id="inf"
-# )
+train_and_test(
+    dict(
+        RUN_ID = "etank_inf_1",
+        ENVIRONMENT = "pendulum_f1",
+        ENERGY_TANK_INIT = 1000,
+        ENERGY_AWARE = False
+    ),
+    test_id="inf"
+)
 
 train_and_test(
     dict(

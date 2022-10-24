@@ -6,8 +6,8 @@
 		<geom contype="0" friction="1 0.1 0.1" rgba="0.7 0.7 0 1"/>
 	</default>
 
-	<option gravity="0 0 -9.81" integrator="RK4" timestep="0.01"/>
-  
+	<option gravity="0 0 -9.81" integrator="RK4" timestep="0.01"/> 
+	
 	<worldbody> 
 		<!--visulize x,y,and z axes-->
 		<site name="x_axes" pos="0.1 0 0" size="0.1 0.001 0.001" rgba="1 0 0 0.2"  type="box"></site>

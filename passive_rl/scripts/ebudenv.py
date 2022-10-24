@@ -10,7 +10,8 @@ class EBudBaseEnv(gym.Env):
                 energy_tank_init = 7, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 debug = False,
-                energy_terminate = False 
+                energy_terminate = False,
+                recycle_energy = False 
                 ):
         super(EBudBaseEnv, self).__init__()
 
@@ -41,6 +42,7 @@ class EBudBaseEnv(gym.Env):
         self.energy_tank = energy_tank_init  
         self.energy_tank_threshold = energy_tank_threshold
         self.energy_avaiable = True 
+        self.recycle_energy = recycle_energy
 
         self.energy_stop_ct = 0
 
@@ -61,10 +63,11 @@ class EBudBaseEnv(gym.Env):
 
         old_joints = self.joints 
         new_joints = joints 
-        d_joints = new_joints - old_joints
+        d_joints = new_joints - old_joints 
         self.energy_joints = torques*d_joints  
         self.energy_exchanged = sum(self.energy_joints)
-        self.energy_tank -= self.energy_exchanged 
+        if self.energy_exchanged >= 0 or self.recycle_energy:
+            self.energy_tank -= self.energy_exchanged 
         tank_is_empty = self.energy_tank <= self.energy_tank_threshold
         self.energy_avaiable = not tank_is_empty
         self.joints = new_joints 
