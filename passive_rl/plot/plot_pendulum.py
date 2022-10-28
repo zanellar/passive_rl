@@ -13,7 +13,9 @@ min_init08 = 2.5873415976297114
 min_init06 = 1.940506198222283
 min_init03 = 0.9702530991111415
 
-
+label_friction_0 = "$\phi^{(0)}$"  
+label_friction_1 = "$\phi^{(1)}$"  
+label_friction_001 = "$\phi^{(0.01)}$"  
 label_inf_inf = "$\phi_\infty$" 
 label_inf_min = "$\phi_{\infty|{E^*}}$" 
 label_min = "$\phi_{E^*}$"
@@ -24,39 +26,39 @@ label_min08_eaw = "$\phi_{E^*_{0.8}}^{aw}$"
 label_min06_eaw = "$\phi_{E^*_{0.6}}^{aw}$"
 label_min03_eaw = "$\phi_{E^*_{0.3}}^{aw}$"
 
-plotter = PlotterEBud(out_train_folder=out_train_folder, out_test_folder=out_test_folder, plot_folder=plot_folder) 
+plotter = PlotterEBud(out_train_folder = out_train_folder, out_test_folder = out_test_folder, plot_folder = plot_folder) 
 
-###############################################################################################################################
+##############################################################################################################################
 
 train_env_run_ids = [  "pendulum_f1/etank_inf", "pendulum_f0/etank_inf", "pendulum_f001/etank_inf"]
-plotter.plot_avg_train_multirun_energy(
-    env_run_ids=train_env_run_ids,
-    labels=["1", "0", "0.01"],  
-    show=False, plot_name="friction", ext="pdf", xlim=[0,30], xsteps=False) 
-plotter.plot_avg_train_multirun_returns(
-    env_run_ids=train_env_run_ids,
-    labels=[ "1", "0", "0.01"],  
-    show=False, plot_name="friction", ext="pdf", xlim=[0,200], xsteps=False) 
-plotter.plot_avg_train_multirun_error(
-    env_run_ids=train_env_run_ids,
-    labels=[ "1", "0", "0.01"],  
-    show=False, plot_name="friction", ext="pdf", xlim=[0,200], xsteps=False)
+plotter.multirun_energytank_train( 
+    env_run_ids = train_env_run_ids,
+    labels = [label_friction_1, label_friction_0, label_friction_001],  
+    show = False, plot_name = "friction", ext = "pdf", xlim = [0,30], xsteps = False) 
+plotter.multirun_returns_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_friction_1, label_friction_0, label_friction_001],  
+    show = False, plot_name = "friction", ext = "pdf", xlim = [0,200], xsteps = False) 
+plotter.multirun_energytank_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_friction_1, label_friction_0, label_friction_001],  
+    show = False, plot_name = "friction", ext = "pdf", xlim = [0,200], xsteps = False)
 
-###############################################################################################################################
+##############################################################################################################################
 
 test_env_run_ids = ["pendulum_f001/etank_inf_inf", "pendulum_f1/etank_inf_inf", "pendulum_f0/etank_inf_inf"]
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids, 
-    labels=["0.01", "1", "0"], 
-    show=False, plot_name="friction_box", ext="pdf", type="boxplot")
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids, 
-    labels=["0.01", "1", "0"], 
-    show=False, plot_name="friction_hist", ext="pdf", type="histplot")
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids, 
-    labels=["0.01", "1", "0"], 
-    show=False, plot_name="friction_violin", ext="pdf", type="violinplot")
+plotter.multirun_energytank_test(
+    env_run_ids = test_env_run_ids, 
+    labels = [label_friction_001,label_friction_1, label_friction_0], 
+    show = False, plot_name = "friction_box", ext = "pdf", plot_type = "boxplot")
+# plotter.multirun_energytank_test(
+#     env_run_ids = test_env_run_ids, 
+#     labels = [label_friction_001,label_friction_1, label_friction_0], 
+#     show = False, plot_name = "friction_hist", ext = "pdf", plot_type = "histplot")
+plotter.multirun_energytank_test(
+    env_run_ids = test_env_run_ids, 
+    labels = [label_friction_001,label_friction_1, label_friction_0], 
+    show = False, plot_name = "friction_violin", ext = "pdf", plot_type = "violinplot")
  
 
  
@@ -65,83 +67,108 @@ plotter.plot_stat_test_multirun_energy(
 ###############################################################################################################################
 
 train_env_run_ids = [  "pendulum_f001/etank_inf", "pendulum_f001/etank_min" ] 
-plotter.plot_avg_train_multirun_returns(
-    env_run_ids=train_env_run_ids,
-    labels=[label_inf_inf, label_min ],   
-    show=False, plot_name="etankinit_infmin", ext="pdf", xlim=[0,200], xsteps=False)
-plotter.plot_avg_train_multirun_error(
-    env_run_ids=train_env_run_ids,
-    labels=[label_inf_inf, label_min],   
-    show=False, plot_name="etankinit", ext="pdf", xlim=[0,200], xsteps=False)
+plotter.multirun_energyexiting_train( 
+    env_run_ids = train_env_run_ids,
+    etank_init_list = [inf_init, min_init ], 
+    labels = [label_inf_inf, label_min ], ylabels = "Energy",
+    show = False, plot_name = "etankinit_infmin", ext = "pdf", xlim = [0,50], xsteps = False)  
+plotter.multirun_returns_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_inf_inf, label_min ],   
+    show = False, plot_name = "etankinit_infmin", ext = "pdf", xlim = [0,200], xsteps = False)
+plotter.multirun_poserror_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_inf_inf, label_min],   
+    show = False, plot_name = "etankinit_infmin", ext = "pdf", xlim = [0,200], xsteps = False)
  
 ###############################################################################################################################
 
 test_env_run_ids = ["pendulum_f001/etank_inf_min","pendulum_f001/etank_min_min" ]
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids, 
-    etank_init_list=[min_init, min_init ], 
-    labels=[label_inf_min, label_min], 
-    show=False, plot_name="tankinit_box_infmin", ext="pdf", type="boxplot") 
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids, 
-    etank_init_list=[min_init, min_init ], 
-    labels=[label_inf_min, label_min ], 
-    show=False, plot_name="tankinit_hist_infmin", ext="pdf", type="histplot")  
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids, 
-    etank_init_list=[min_init, min_init ], 
-    labels=[label_inf_min, label_min ], 
-    show=False, plot_name="tankinit_violin_infmin", ext="pdf", type="violinplot") 
+plotter.multirun_tanklevel_test(
+    env_run_ids = test_env_run_ids, 
+    etank_init_list = [min_init, min_init ], 
+    labels = [label_inf_min, label_min], xlabels = "Models",
+    show = False, plot_name = "tankinit_box_infmin", ext = "pdf", plot_type = "boxplot") 
+# plotter.multirun_tanklevel_test(
+#     env_run_ids = test_env_run_ids, 
+#     etank_init_list = [min_init, min_init ], 
+#     labels = [label_inf_min, label_min ], 
+#     show = False, plot_name = "tankinit_hist_infmin", ext = "pdf", plot_type = "histplot")  
+plotter.multirun_tanklevel_test(
+    env_run_ids = test_env_run_ids, 
+    etank_init_list = [min_init, min_init ], 
+    labels = [label_inf_min, label_min ],  xlabels = "Models",
+    show = False, plot_name = "tankinit_violin_infmin", ext = "pdf", plot_type = "violinplot") 
+
+
+plotter.multirun_returns_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [label_inf_min, label_min], xlabels = "Models",
+    show = False, plot_name = "tankinit_box_infmin", ext = "pdf", plot_type = "boxplot")  
+plotter.multirun_returns_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [label_inf_min, label_min], xlabels = "Models",
+    show = False, plot_name = "tankinit_violin_infmin", ext = "pdf", plot_type = "violinplot")  
 
 
 ###############################################################################################################################
 
 train_env_run_ids = [  "pendulum_f001/etank_min", "pendulum_f001/etank_min08" , "pendulum_f001/etank_min03" ]
-plotter.plot_avg_train_multirun_tanklv(
-    env_run_ids=train_env_run_ids,
-    labels=[label_min, label_min08, label_min03 ],  
+plotter.multirun_tanklevel_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_min, label_min08, label_min03 ],  
     etank_init_list = [min_init, min_init08, min_init03],
-    show=False, plot_name="etankinit_mincuts", ext="pdf", xlim=[0,200], xsteps=False) 
-plotter.plot_avg_train_multirun_returns(
-    env_run_ids=train_env_run_ids,
-    labels=[label_min, label_min08, label_min03 ],   
-    show=False, plot_name="etankinit_mincuts", ext="pdf", xlim=[0,200], xsteps=False)
-plotter.plot_avg_train_multirun_error(
-    env_run_ids=train_env_run_ids,
-    labels=[label_min, label_min08, label_min03 ],   
-    show=False, plot_name="etankinit_mincuts", ext="pdf", xlim=[0,200], xsteps=False)
+    show = False, plot_name = "etankinit_mincuts", ext = "pdf", xlim = [0,200], xsteps = False) 
+plotter.multirun_returns_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_min, label_min08, label_min03 ],   
+    show = False, plot_name = "etankinit_mincuts", ext = "pdf", xlim = [0,200], xsteps = False)
+plotter.multirun_poserror_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_min, label_min08, label_min03 ],   
+    show = False, plot_name = "etankinit_mincuts", ext = "pdf", xlim = [0,200], xsteps = False)
 
 ###############################################################################################################################
 
 test_env_run_ids = [ "pendulum_f001/etank_min_min", "pendulum_f001/etank_min08_min08",   "pendulum_f001/etank_min03_min03"]
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids,  
-    labels=[ label_min, label_min08,  label_min03], 
-    show=False, plot_name="tankinit_box_mincuts", ext="pdf", type="boxplot") 
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids,  
-    labels=[ label_min, label_min08,  label_min03], 
-    show=False, plot_name="tankinit_hist_mincuts", ext="pdf", type="histplot") 
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids,  
-    labels=[  label_min, label_min08,  label_min03], 
-    show=False, plot_name="tankinit_violin_mincuts", ext="pdf", type="violinplot") 
+plotter.multirun_energytank_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [ label_min, label_min08,  label_min03],  xlabels = "Models",
+    show = False, plot_name = "tankinit_box_mincuts", ext = "pdf", plot_type = "boxplot") 
+# plotter.multirun_energytank_test(
+#     env_run_ids = test_env_run_ids,  
+#     labels = [ label_min, label_min08,  label_min03], 
+#     show = False, plot_name = "tankinit_hist_mincuts", ext = "pdf", plot_type = "histplot") 
+plotter.multirun_energytank_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [  label_min, label_min08,  label_min03],  xlabels = "Models",
+    show = False, plot_name = "tankinit_violin_mincuts", ext = "pdf", plot_type = "violinplot") 
 
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids,  
-    labels=[ label_min, label_min08,  label_min03], 
-    etank_init_list=[ min_init, min_init08, min_init03 ], 
-    show=False, plot_name="tankinit_box_mincuts", ext="pdf", type="boxplot") 
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids,  
-    labels=[ label_min, label_min08,  label_min03], 
-    etank_init_list=[ min_init, min_init08, min_init03 ], 
-    show=False, plot_name="tankinit_hist_mincuts", ext="pdf", type="histplot") 
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids,  
-    labels=[ label_min, label_min08,  label_min03], 
-    etank_init_list=[ min_init, min_init08, min_init03 ], 
-    show=False, plot_name="tankinit_violin_mincuts", ext="pdf", type="violinplot") 
+plotter.multirun_tanklevel_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [ label_min, label_min08,  label_min03],  xlabels = "Models",
+    etank_init_list = [ min_init, min_init08, min_init03 ], 
+    show = False, plot_name = "tankinit_box_mincuts", ext = "pdf", plot_type = "boxplot") 
+# plotter.multirun_tanklevel_test(
+#     env_run_ids = test_env_run_ids,  
+#     labels = [ label_min, label_min08,  label_min03], 
+#     etank_init_list = [ min_init, min_init08, min_init03 ], 
+#     show = False, plot_name = "tankinit_hist_mincuts", ext = "pdf", plot_type = "histplot") 
+plotter.multirun_tanklevel_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [ label_min, label_min08,  label_min03],  xlabels = "Models",
+    etank_init_list = [ min_init, min_init08, min_init03 ],   
+    show = False, plot_name = "tankinit_violin_mincuts", ext = "pdf", plot_type = "violinplot") 
+
+
+plotter.multirun_returns_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [ label_min, label_min08,  label_min03],  xlabels = "Models",
+    show = False, plot_name = "tankinit_box_mincuts", ext = "pdf", plot_type = "boxplot")  
+plotter.multirun_returns_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [ label_min, label_min08,  label_min03],  xlabels = "Models",
+    show = False, plot_name = "tankinit_violin_mincuts", ext = "pdf", plot_type = "violinplot")  
 
 ###############################################################################################################################
 ###############################################################################################################################
@@ -149,44 +176,45 @@ plotter.plot_stat_test_multirun_tanklv(
 
 
 train_env_run_ids = [  "pendulum_f001/etank_min", "pendulum_f001/etank_min08eaw" ,  "pendulum_f001/etank_min03eaw"  ]
-plotter.plot_avg_train_multirun_tanklv(
-    env_run_ids=train_env_run_ids,
-    labels=[label_min, label_min08_eaw,   label_min03_eaw ],  
+plotter.multirun_tanklevel_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_min, label_min08_eaw, label_min03_eaw ],  
     etank_init_list = [min_init, min_init08, min_init03],
-    show=False, plot_name="etankinit_mincuts_eaw", ext="pdf", xlim=[0,200], xsteps=False)  
-plotter.plot_avg_train_multirun_error(
-    env_run_ids=train_env_run_ids,
-    labels=[label_min, label_min08_eaw, label_min03_eaw ],  
-    show=False, plot_name="etankinit_mincuts_eaw", ext="pdf", xlim=[0,200], xsteps=False)
+    show = False, plot_name = "etankinit_mincuts_eaw", ext = "pdf", xlim = [0,200], xsteps = False)  
+plotter.multirun_poserror_train(
+    env_run_ids = train_env_run_ids,
+    labels = [label_min, label_min08_eaw, label_min03_eaw ],  
+    show = False, plot_name = "etankinit_mincuts_eaw", ext = "pdf", xlim = [0,200], xsteps = False)
 
 ###############################################################################################################################
 
 test_env_run_ids = [ "pendulum_f001/etank_min_min", "pendulum_f001/etank_min08eaw_min08eaw", "pendulum_f001/etank_min03eaw_min03eaw" ]
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids,  
-    labels=[label_min, label_min08_eaw, label_min03_eaw ],  
-    show=False, plot_name="tankinit_box_mincuts_eaw", ext="pdf", type="boxplot") 
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids,  
-    labels=[label_min, label_min08_eaw,  label_min03_eaw ],  
-    show=False, plot_name="tankinit_hist_mincuts_eaw", ext="pdf", type="histplot") 
-plotter.plot_stat_test_multirun_energy(
-    env_run_ids=test_env_run_ids,  
-    labels=[label_min, label_min08_eaw, label_min03_eaw ],  
-    show=False, plot_name="tankinit_violin_mincuts_eaw", ext="pdf", type="violinplot")  
+plotter.multirun_energytank_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [label_min, label_min08_eaw, label_min03_eaw ],   xlabels = "Models",
+    show = False, plot_name = "tankinit_box_mincuts_eaw", ext = "pdf", plot_type = "boxplot") 
+# plotter.multirun_energytank_test(
+#     env_run_ids = test_env_run_ids,  
+#     labels = [label_min, label_min08_eaw,  label_min03_eaw ],  
+#     show = False, plot_name = "tankinit_hist_mincuts_eaw", ext = "pdf", plot_type = "histplot") 
+plotter.multirun_energytank_test(
+    env_run_ids = test_env_run_ids,  
+    labels = [label_min, label_min08_eaw, label_min03_eaw ],   xlabels = "Models",
+    show = False, plot_name = "tankinit_violin_mincuts_eaw", ext = "pdf", plot_type = "violinplot")  
 
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids, 
+plotter.multirun_tanklevel_test(
+    env_run_ids = test_env_run_ids, 
     etank_init_list = [min_init, min_init08, min_init03],
-    labels=[label_min, label_min08_eaw, label_min03_eaw ],  
-    show=False, plot_name="tankinit_box_mincuts_eaw", ext="pdf", type="boxplot") 
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids, 
+    labels = [label_min, label_min08_eaw, label_min03_eaw ],   xlabels = "Models",
+    show = False, plot_name = "tankinit_box_mincuts_eaw", ext = "pdf", plot_type = "boxplot") 
+# plotter.multirun_tanklevel_test(
+#     env_run_ids = test_env_run_ids, 
+#     etank_init_list = [min_init, min_init08, min_init03],
+#     labels = [label_min, label_min08_eaw,  label_min03_eaw ],  
+#     show = False, plot_name = "tankinit_hist_mincuts_eaw", ext = "pdf", plot_type = "histplot")  
+plotter.multirun_tanklevel_test(
+    env_run_ids = test_env_run_ids, 
     etank_init_list = [min_init, min_init08, min_init03],
-    labels=[label_min, label_min08_eaw,  label_min03_eaw ],  
-    show=False, plot_name="tankinit_hist_mincuts_eaw", ext="pdf", type="histplot")  
-plotter.plot_stat_test_multirun_tanklv(
-    env_run_ids=test_env_run_ids, 
-    etank_init_list = [min_init, min_init08, min_init03],
-    labels=[label_min, label_min08_eaw,   label_min03_eaw ],  
-    show=False, plot_name="tankinit_violin_mincuts_eaw", ext="pdf", type="violinplot") 
+    labels = [label_min, label_min08_eaw,   label_min03_eaw ],   xlabels = "Models",
+    show = False, plot_name = "tankinit_violin_mincuts_eaw", ext = "pdf", plot_type = "violinplot") 
+ 

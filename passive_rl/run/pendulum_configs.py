@@ -29,7 +29,7 @@ class Args(DefaultArgs):
   
     AGENT = "SAC"  
     AGENT_PARAMS = dict(
-        seed = [17,29,67,157,109,211,277,331,359,419],
+        seed = [17,29,67,157,109,211,277,331,359,419], # [17,29,157,277,359]
         buffer_size = [int(1e6)],
         batch_size = [256],
         learning_starts = [1*EXPL_EPISODE_HORIZON],  

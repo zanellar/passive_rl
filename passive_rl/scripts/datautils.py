@@ -64,16 +64,19 @@ def df_episodes_energy(data, smooth=False, etype="min", etank_init=None):
         exit(f"Energy '{etype}', not saved in logs")
 
     if etank_init is not None:
-        norm_level =  1+(np.array(energy) - etank_init)/etank_init 
+        enrgy_exiting = etank_init-np.array(energy)
+        norm_level =  1 - enrgy_exiting/etank_init 
     else:
+        enrgy_exiting = np.zeros(len(energy)) 
         norm_level = np.zeros(len(energy)) 
 
     num_episodes = len(energy)
     timeframe = np.arange(num_episodes)
     if smooth:
         timeframe, energy = _smooth(timeframe,energy,num_steps(data))
+        timeframe, enrgy_exiting = _smooth(timeframe,enrgy_exiting,num_steps(data))
         timeframe, norm_level = _smooth(timeframe,norm_level,num_steps(data))
-    return pd.DataFrame(dict(Episodes = timeframe, Energy = energy, Level=norm_level))  
+    return pd.DataFrame(dict(Episodes = timeframe, Energy = energy, Level=norm_level, Exiting=enrgy_exiting ))  
 
 def df_run_episodes_energy( run_folder_path, smooth=False, etype = "min", etank_init=None): 
     ''' DataFrame with the energy corresponding to each episode of all the trainings in the given run'''
