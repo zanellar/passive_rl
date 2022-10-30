@@ -116,16 +116,19 @@ def df_multiruns_episodes_energy( run_paths_list, smooth=False, etype = "min", r
 ###########################################################################
 ###########################################################################
 
-def df_episodes_error(data, smooth=False ):
+def df_episodes_error(data, smooth=False, final_error=True ):
     ''' DataFrame with the errors corresponding to each episode of the loaded training'''
-    errors = data["err_pos_tot_episode"]   
+    if final_error:
+        errors = data["err_pos_final_episode"]   
+    else:
+        errors = data["err_pos_tot_episode"]   
     num_episodes = len(errors)
     timeframe = np.arange(num_episodes)
     if smooth:
         timeframe, errors = _smooth(timeframe,errors,num_steps(data))
     return pd.DataFrame(dict(Episodes = timeframe, Errors = errors))  
 
-def df_run_episodes_error( run_folder_path, smooth=False ): 
+def df_run_episodes_error( run_folder_path, smooth=False, final_error=True ): 
     ''' DataFrame with the errors corresponding to each episode of all the trainings in the given run'''
     comb_df = pd.DataFrame()  
     print(f"Loading logs from: {run_folder_path}")
@@ -136,16 +139,16 @@ def df_run_episodes_error( run_folder_path, smooth=False ):
         if name.startswith("errors_") and ext==".json": 
             file_path = os.path.join(saved_logs_path, file_name)
             data = dataload(file_path) 
-            df =  df_episodes_error(data)
+            df =  df_episodes_error(data, final_error=final_error)
             df["Trainings"] = [name]*len(df["Episodes"])
             comb_df = pd.concat([comb_df, df], ignore_index=True)
     return comb_df
 
-def df_multiruns_episodes_error( run_paths_list, smooth=False , run_label_list=[]):  
+def df_multiruns_episodes_error( run_paths_list, smooth=False , run_label_list=[], final_error=True ):  
     ''' DataFrame with the energy corresponding to each episode of all the trainings in the given list of runs'''
     comb_df = pd.DataFrame()   
     for i, run_folder_path in enumerate(run_paths_list): 
-        df = df_run_episodes_error(run_folder_path, smooth=smooth ) 
+        df = df_run_episodes_error(run_folder_path, smooth=smooth, final_error=final_error ) 
         if len(run_label_list) > 0:
             run_label = run_label_list[i]
         else:

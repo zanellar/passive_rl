@@ -109,7 +109,7 @@ class PlotterEBud(Plotter):
 
         run_paths_list = [os.path.join(self.out_train_folder, env_run) for env_run in env_run_ids]
 
-        data = df_multiruns_episodes_error(run_paths_list=run_paths_list, smooth=xsteps, run_label_list=labels) 
+        data = df_multiruns_episodes_error(run_paths_list=run_paths_list, smooth=xsteps, run_label_list=labels, final_error=True) 
         save_path = os.path.join(self.save_multirun_training_plots_path, f"{plot_name}_multirun_poserror_train.{ext}") 
 
         self._line_plot(

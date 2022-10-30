@@ -10,6 +10,7 @@ class ErrorsCallback(BaseLogCallback):
         super().__init__(prefix="errors")  
         self.save_all = save_all 
         self.err_pos_tot_episode = 0   
+        self.err_pos = 0   
 
     def _on_training_start(self) -> None:
         self.episodes_data = dict(err_pos=[], cos_pos=[], tanh_vel=[])
@@ -26,11 +27,11 @@ class ErrorsCallback(BaseLogCallback):
         sin_pos = obs[0] 
         cos_pos = obs[1] 
         tanh_vel = obs[2]  
-        err_pos = abs(1. - sin_pos)
-        self.err_pos_tot_episode += err_pos 
+        self.err_pos = abs(1. - sin_pos)
+        self.err_pos_tot_episode += self.err_pos 
   
         if self.save_all:
-            self.episodes_data["err_pos"].append(err_pos)
+            self.episodes_data["err_pos"].append(self.err_pos)
             self.episodes_data["cos_pos"].append(cos_pos)  
             self.episodes_data["tanh_vel"].append(tanh_vel)  
         return True
@@ -41,6 +42,8 @@ class ErrorsCallback(BaseLogCallback):
         if self._is_episode_end(): 
             self.logger.record('errors/pos_tot_episode', self.err_pos_tot_episode)  # -> tensorboard 
             self.training_data["err_pos_tot_episode"].append(self.err_pos_tot_episode)   
+            self.logger.record('errors/pos_final_episode', self.err_pos_tot_episode)  # -> tensorboard 
+            self.training_data["err_pos_final_episode"].append(self.err_pos)   
             if self.save_all:
                 self.training_data["episodes_data"].append(self.episodes_data)   
             self.err_pos_tot_episode = 0

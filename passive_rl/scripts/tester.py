@@ -22,7 +22,7 @@ class TestRunEBud(TestRun):
         os.rename(src=self.testing_output_folder_path, dst=new_testing_output_folder_path)
         self.testing_output_folder_path = new_testing_output_folder_path
     
-    def eval_ebud_model(self, model_id="random", n_eval_episodes=30, render=False, save=False): 
+    def eval_ebud_model(self, model_id="random", n_eval_episodes=30, final_error_only=True, render=False, save=False): 
         self._loadmodel(model_id) 
         obs = self.env.reset() 
         episode_emin = None
@@ -32,13 +32,23 @@ class TestRunEBud(TestRun):
         i = 0
         while i<=n_eval_episodes: 
             action, _ = self.model.predict(obs, deterministic=True)
-            obs, _, done, info = self.env.step(action)    
+            obs, _, done, info = self.env.step(action)   
+
+            # position error 
             sin_pos = obs[0][0]  
-            episode_err += abs(1. - sin_pos)
+            position_error = abs(1. - sin_pos)
+            if final_error_only:
+                episode_err = position_error
+            else:
+                episode_err += position_error
+
+            # minimal energy in tank
             energy = info[0]["energy_tank"]
             episode_emin = min(energy,episode_emin) if episode_emin is not None else energy 
+
             if render:
                 self.env.render() # BUG not working cam selection
+                
             if done:
                 i +=1 
                 obs = self.env.reset()
