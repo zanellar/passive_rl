@@ -14,9 +14,8 @@ def test(x=None, test_id=""):
     if x is not None:
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
-    tester.eval_returns_run(n_eval_episodes=n_eval_episodes, save=True)
-    eval_ebud_data = tester.eval_ebud_run(n_eval_episodes=n_eval_episodes, save=True)
-    return np.amin(eval_ebud_data["emin"])
+    data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True)
+    return np.amin(data["emin"])
 
 
 
