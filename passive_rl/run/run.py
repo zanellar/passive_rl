@@ -19,8 +19,8 @@ def test(x=None, test_id=""):
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
     tester.eval_returns_run(n_eval_episodes=n_eval_episodes, save=True)
-    emin_full_list = tester.eval_emin_run(n_eval_episodes=n_eval_episodes, save=True)
-    return np.amin(emin_full_list)
+    eval_ebud_data = tester.eval_ebud_run(n_eval_episodes=n_eval_episodes, save=True)
+    return np.amin(eval_ebud_data["emin"])
 
 def train_and_test(x, test_id=""): 
     Args.set(x) 
@@ -38,32 +38,35 @@ def train_and_test(x, test_id=""):
 
 train_and_test(
     dict(
-        RUN_ID = "frcomp",
+        RUN_ID = "frcomp_f1",
         ENVIRONMENT = "pendulum_f1",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False,
         INIT_JOINT_CONFIG = [-np.pi/2]
-    ) 
-)
+    ),  
+    test_id="f1"
+) 
 
 train_and_test(
     dict(
-        RUN_ID = "frcomp",
+        RUN_ID = "frcomp_f0",
         ENVIRONMENT = "pendulum_f0",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False,
         INIT_JOINT_CONFIG = [-np.pi/2]
-    ) 
-)
+    ) ,  
+    test_id="f0"
+) 
 
 train_and_test(
     dict(
-        RUN_ID = "frcomp",
+        RUN_ID = "frcomp_f001",
         ENVIRONMENT = "pendulum_f001",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False ,
         INIT_JOINT_CONFIG = [-np.pi/2] 
-    ) 
+    ) ,  
+    test_id="f001"
 )
 
  #############################################

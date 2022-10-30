@@ -9,7 +9,7 @@ from passive_rl.envs.pendulum.pendulum import PendulumEBud,PendulumEBudAw
 
 n_eval_episodes = 50
 
-run_results_file_path = os.path.join(PkgPath.OUT_TRAIN_FOLDER,"run_results_06.txt")  
+run_results_file_path = os.path.join(PkgPath.OUT_TRAIN_FOLDER,"run_results.txt")  
 with open(run_results_file_path, 'w') as file: 
     line = ""   
     file.write(line) 
@@ -19,8 +19,8 @@ def test(x=None, test_id=""):
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
     tester.eval_returns_run(n_eval_episodes=n_eval_episodes, save=True)
-    emin_full_list = tester.eval_emin_run(n_eval_episodes=n_eval_episodes, save=True)
-    return np.amin(emin_full_list)
+    eval_ebud_data = tester.eval_ebud_run(n_eval_episodes=n_eval_episodes, save=True)
+    return np.amin(eval_ebud_data["emin"])
 
 def train_and_test(x, test_id=""): 
     Args.set(x) 
@@ -35,21 +35,24 @@ def train_and_test(x, test_id=""):
 
 
 ################################################################################################ 
-  
  
-min_etank_init = 1000 - 994.9937158728585
- 
+min_emin = 996.8124329794123
+
+min_etank_init = 1000 - min_emin
+
+
+ #############################################
+
 train_and_test(
     dict(
-        RUN_ID = "etank_min06",
+        RUN_ID = "etank_min08eaw",
         ENVIRONMENT = "pendulum_f001",
-        ENERGY_TANK_INIT = min_etank_init*0.6,
-        ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  "random" 
+        ENERGY_TANK_INIT = min_etank_init*0.8,
+        ENERGY_AWARE = True,
+        INIT_JOINT_CONFIG =  [-np.pi/2] # "random"  
     ),
-    test_id="min06"
+    test_id="min08eaw"
 )
- 
 
 train_and_test(
     dict(
@@ -57,8 +60,19 @@ train_and_test(
         ENVIRONMENT = "pendulum_f001",
         ENERGY_TANK_INIT = min_etank_init*0.6,
         ENERGY_AWARE = True,
-        INIT_JOINT_CONFIG =  "random"
+        INIT_JOINT_CONFIG =  [-np.pi/2] # "random"
     ),
     test_id="min06eaw"
+)
+
+train_and_test(
+    dict(
+        RUN_ID = "etank_min03eaw",
+        ENVIRONMENT = "pendulum_f001",
+        ENERGY_TANK_INIT = min_etank_init*0.3,
+        ENERGY_AWARE = True,
+        INIT_JOINT_CONFIG =  [-np.pi/2] # "random" 
+    ),
+    test_id="min03eaw"
 )
  

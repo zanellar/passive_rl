@@ -30,34 +30,34 @@ plotter = PlotterEBud(out_train_folder = out_train_folder, out_test_folder = out
 
 ##############################################################################################################################
 
-train_env_run_ids = [  "pendulum_f1/etank_inf", "pendulum_f0/etank_inf", "pendulum_f001/etank_inf"]
+train_env_run_ids = [  "pendulum_f1/frcomp_f1", "pendulum_f0/frcomp_f0"]
 plotter.multirun_energytank_train( 
     env_run_ids = train_env_run_ids,
-    labels = [label_friction_1, label_friction_0, label_friction_001],  
+    labels = [label_friction_1, label_friction_0],  
     show = False, plot_name = "friction", ext = "pdf", xlim = [0,30], xsteps = False) 
 plotter.multirun_returns_train(
     env_run_ids = train_env_run_ids,
-    labels = [label_friction_1, label_friction_0, label_friction_001],  
+    labels = [label_friction_1, label_friction_0],  
     show = False, plot_name = "friction", ext = "pdf", xlim = [0,200], xsteps = False) 
 plotter.multirun_energytank_train(
     env_run_ids = train_env_run_ids,
-    labels = [label_friction_1, label_friction_0, label_friction_001],  
+    labels = [label_friction_1, label_friction_0],  
     show = False, plot_name = "friction", ext = "pdf", xlim = [0,200], xsteps = False)
 
 ##############################################################################################################################
 
-test_env_run_ids = ["pendulum_f001/etank_inf_inf", "pendulum_f1/etank_inf_inf", "pendulum_f0/etank_inf_inf"]
+test_env_run_ids = ["pendulum_f001/frcomp_f1", "pendulum_f1/frcomp_f0"]
 plotter.multirun_energytank_test(
     env_run_ids = test_env_run_ids, 
-    labels = [label_friction_001,label_friction_1, label_friction_0], 
+    labels = [label_friction_1,label_friction_0], 
     show = False, plot_name = "friction_box", ext = "pdf", plot_type = "boxplot")
 # plotter.multirun_energytank_test(
 #     env_run_ids = test_env_run_ids, 
-#     labels = [label_friction_001,label_friction_1, label_friction_0], 
+#     labels = [label_friction_1,label_friction_0], 
 #     show = False, plot_name = "friction_hist", ext = "pdf", plot_type = "histplot")
 plotter.multirun_energytank_test(
     env_run_ids = test_env_run_ids, 
-    labels = [label_friction_001,label_friction_1, label_friction_0], 
+    labels = [label_friction_1,label_friction_0], 
     show = False, plot_name = "friction_violin", ext = "pdf", plot_type = "violinplot")
  
 

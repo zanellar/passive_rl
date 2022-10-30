@@ -22,68 +22,21 @@ class TestRunEBud(TestRun):
         os.rename(src=self.testing_output_folder_path, dst=new_testing_output_folder_path)
         self.testing_output_folder_path = new_testing_output_folder_path
     
-    def eval_emin_model(self, model_id="random", n_eval_episodes=30, render=False, save=False): 
+    def eval_ebud_model(self, model_id="random", n_eval_episodes=30, render=False, save=False): 
         self._loadmodel(model_id) 
         obs = self.env.reset() 
-        emin = None
+        episode_emin = None
         emin_list = []
-        i = 0
-        while i<=n_eval_episodes: 
-            action, _ = self.model.predict(obs, deterministic=True)
-            obs, _, done, info = self.env.step(action)  
-            energy = info[0]["energy_tank"]
-            emin = min(energy,emin) if emin is not None else energy 
-            if render:
-                self.env.render() # BUG not working cam selection
-            if done:
-                i +=1 
-                obs = self.env.reset()
-                emin_list.append(emin)
-                emin = None 
-        
-        if save:
-            file_path =  os.path.join(self.testing_output_folder_path, f"{model_id}.txt") 
-            with open(file_path, 'w') as file:  
-                file.write(emin_list)  
-
-        return emin_list 
-
-    def eval_emin_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname=""):  
-        data = {}
-        run_training_logs_folder_path = os.path.join(self.training_output_folder_path,"logs")
-        emin_full_list = []
-        for file_name in os.listdir(run_training_logs_folder_path):  
-            name = os.path.splitext(file_name)[0]
-            prefix, model_id = name.split(sep="_", maxsplit=1)
-            if prefix == "energy":  
-                print(f"Evaluating {model_id}")
-                emin_model_list = self.eval_emin_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, save=False) 
-                emin_full_list += emin_model_list
-                data[model_id] = emin_model_list
-        if plot:
-            pass #TODO statannotation 
-        if save:  
-            file_path =  os.path.join(self.testing_output_folder_path, "energy_eval_run.json") 
-            with open(file_path, 'w') as f:
-                json.dump(data, f) 
-         
-        return emin_full_list
-
-    ##################################################################################################################################
-
-    def eval_err_model(self, model_id="random", n_eval_episodes=30, render=False, save=False): 
-        self._loadmodel(model_id) 
-        obs = self.env.reset() 
         episode_err = 0
         err_list = []
         i = 0
         while i<=n_eval_episodes: 
             action, _ = self.model.predict(obs, deterministic=True)
-            obs, _, done, info = self.env.step(action)   
-            sin_pos = obs[0] 
-            cos_pos = obs[1] 
-            tanh_vel = obs[2]   
+            obs, _, done, info = self.env.step(action)    
+            sin_pos = obs[0][0]  
             episode_err += abs(1. - sin_pos)
+            energy = info[0]["energy_tank"]
+            episode_emin = min(energy,episode_emin) if episode_emin is not None else energy 
             if render:
                 self.env.render() # BUG not working cam selection
             if done:
@@ -91,34 +44,44 @@ class TestRunEBud(TestRun):
                 obs = self.env.reset()
                 err_list.append(episode_err)
                 episode_err = 0 
+                emin_list.append(episode_emin)
+                episode_emin = None 
         
         if save:
-            file_path =  os.path.join(self.testing_output_folder_path, f"{model_id}.txt") 
+            file_path =  os.path.join(self.testing_output_folder_path, f"energy_{model_id}.txt") 
+            with open(file_path, 'w') as file:  
+                file.write(emin_list)  
+            file_path =  os.path.join(self.testing_output_folder_path, f"errors_{model_id}.txt") 
             with open(file_path, 'w') as file:  
                 file.write(err_list)  
 
-        return err_list 
+        return dict(emin=emin_list, err=err_list)
 
-    def eval_err_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname=""):  
-        data = {}
+    def eval_ebud_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname=""):  
+        data_emin = {}
+        data_err = {}
         run_training_logs_folder_path = os.path.join(self.training_output_folder_path,"logs")
-        err_full_list = []
+        run_eval_emindata = []
+        run_eval_errdata = []
         for file_name in os.listdir(run_training_logs_folder_path):  
             name = os.path.splitext(file_name)[0]
             prefix, model_id = name.split(sep="_", maxsplit=1)
-            if prefix == "errors":  
+            if prefix == "log":  
                 print(f"Evaluating {model_id}")
-                err_model_list = self.eval_err_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, save=False) 
-                err_full_list += err_model_list
-                data[model_id] = err_model_list
+                model_eval_data = self.eval_ebud_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, save=False) 
+                run_eval_emindata += model_eval_data["emin"]
+                run_eval_errdata += model_eval_data["err"]
+                data_emin[model_id] = run_eval_emindata
+                data_err[model_id] = run_eval_errdata
         if plot:
             pass #TODO statannotation 
         if save:  
+            file_path =  os.path.join(self.testing_output_folder_path, "energy_eval_run.json") 
+            with open(file_path, 'w') as f:
+                json.dump(data_emin, f) 
             file_path =  os.path.join(self.testing_output_folder_path, "errors_eval_run.json") 
             with open(file_path, 'w') as f:
-                json.dump(data, f) 
+                json.dump(data_err, f) 
          
-        return err_full_list
-
-     
-     
+        return dict(emin=data_emin, err=data_err)
+ 
