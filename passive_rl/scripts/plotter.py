@@ -109,7 +109,7 @@ class PlotterEBud(Plotter):
 
         run_paths_list = [os.path.join(self.out_train_folder, env_run) for env_run in env_run_ids]
 
-        data = df_multiruns_episodes_error(run_paths_list=run_paths_list, smooth=xsteps, run_label_list=labels, final_error=True) 
+        data = df_multiruns_episodes_error(run_paths_list=run_paths_list, smooth=xsteps, run_label_list=labels, cumulative_error=True) 
         save_path = os.path.join(self.save_multirun_training_plots_path, f"{plot_name}_multirun_poserror_train.{ext}") 
 
         self._line_plot(
@@ -141,7 +141,7 @@ class PlotterEBud(Plotter):
         run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
         
         data = df_test_multirun_energy(run_paths_list=run_paths_list, etank_init_list=etank_init_list) 
-        save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_multirun_energytank_test.{ext}")
+        save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_{plot_type}_multirun_energytank_test.{ext}")
 
         self._stat_plot(
             data = data,
@@ -167,12 +167,39 @@ class PlotterEBud(Plotter):
         run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
         
         data = df_test_multirun_energy(run_paths_list=run_paths_list, etank_init_list=etank_init_list) 
-        save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_multirun_tanklevel_test.{ext}")
+        save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_{plot_type}_multirun_tanklevel_test.{ext}")
 
         self._stat_plot(
             data = data,
             x =  "Runs", 
             y = "Level",  
+            hue = None,  
+            plot_type = plot_type,
+            labels = labels, 
+            xlabels = xlabels,
+            ylabels = ylabels,
+            show = show,
+            save = save,
+            save_path = save_path,
+            ext = ext
+        )    
+
+ 
+
+    ##############################################################################################################################################################
+ 
+    def multirun_poserror_test(self, env_run_ids, labels=[], xlabels=None, ylabels=None,  save=True, show=True, plot_name=None, plot_type="histplot", ext="pdf"): 
+        if plot_name == None:
+            plot_name = str(len(env_run_ids))
+        run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
+        
+        data = df_test_multirun_errors( run_paths_list=run_paths_list  )
+        save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_{plot_type}_multirun_poserror_test.{ext}")
+
+        self._stat_plot(
+            data = data,
+            x =  "Runs", 
+            y = "Errors",  
             hue = None,  
             plot_type = plot_type,
             labels = labels, 

@@ -22,7 +22,7 @@ class TestRunEBud(TestRun):
         os.rename(src=self.testing_output_folder_path, dst=new_testing_output_folder_path)
         self.testing_output_folder_path = new_testing_output_folder_path
     
-    def eval_model(self, model_id="random", n_eval_episodes=30, final_error_only=True, render=False, save=False): 
+    def eval_model(self, model_id="random", n_eval_episodes=30, cumulative_error=False, render=False, save=False): 
         self._loadmodel(model_id) 
         obs = self.env.reset() 
         episode_emin = None
@@ -42,10 +42,10 @@ class TestRunEBud(TestRun):
             # position error 
             sin_pos = obs[0][0]  
             position_error = abs(1. - sin_pos)
-            if final_error_only:
-                episode_err = position_error
-            else:
+            if cumulative_error:
                 episode_err += position_error
+            else:
+                episode_err = position_error
 
             # minimal energy in tank
             energy = info[0]["energy_tank"]
@@ -77,7 +77,7 @@ class TestRunEBud(TestRun):
 
         return dict(emin=emin_list, err=err_list, ret=returns_list)
 
-    def eval_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname=""):  
+    def eval_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname="", cumulative_error=False):  
         data_emin = {}
         data_err = {}
         data_ret = {}
@@ -90,7 +90,7 @@ class TestRunEBud(TestRun):
             prefix, model_id = name.split(sep="_", maxsplit=1)
             if prefix == "log":  
                 print(f"Evaluating {model_id}")
-                model_eval_data = self.eval_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, save=False) 
+                model_eval_data = self.eval_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, cumulative_error=cumulative_error, save=False) 
                 run_eval_retdata += model_eval_data["ret"] 
                 run_eval_emindata += model_eval_data["emin"] 
                 run_eval_errdata += model_eval_data["err"]

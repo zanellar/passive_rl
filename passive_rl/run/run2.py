@@ -7,7 +7,7 @@ from passive_rl.scripts.tester import TestRunEBud
 from passive_rl.run.pendulum_configs import Args 
 from passive_rl.envs.pendulum.pendulum import PendulumEBud,PendulumEBudAw
 
-n_eval_episodes = 50
+n_eval_episodes = 1
 
 run_results_file_path = os.path.join(PkgPath.OUT_TRAIN_FOLDER,"run_results.txt")  
 with open(run_results_file_path, 'w') as file: 
@@ -45,7 +45,7 @@ min_etank_init = 1000 - min_emin
 train_and_test(
     dict(
         RUN_ID = "etank_min08eaw",
-        ENVIRONMENT = "pendulum_f001",
+        ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init*0.8,
         ENERGY_AWARE = True,
         INIT_JOINT_CONFIG =  [-np.pi/2] # "random"  
@@ -56,7 +56,7 @@ train_and_test(
 train_and_test(
     dict(
         RUN_ID = "etank_min06eaw",
-        ENVIRONMENT = "pendulum_f001",
+        ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init*0.6,
         ENERGY_AWARE = True,
         INIT_JOINT_CONFIG =  [-np.pi/2] # "random"
@@ -67,7 +67,7 @@ train_and_test(
 train_and_test(
     dict(
         RUN_ID = "etank_min03eaw",
-        ENVIRONMENT = "pendulum_f001",
+        ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init*0.3,
         ENERGY_AWARE = True,
         INIT_JOINT_CONFIG =  [-np.pi/2] # "random" 

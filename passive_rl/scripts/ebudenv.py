@@ -66,8 +66,9 @@ class EBudBaseEnv(gym.Env):
         d_joints = new_joints - old_joints 
         self.energy_joints = torques*d_joints  
         self.energy_exchanged = sum(self.energy_joints)
-        if self.energy_exchanged >= 0 or self.recycle_energy:
-            self.energy_tank -= self.energy_exchanged 
+        if self.energy_exchanged <= 0 and not self.recycle_energy:
+            self.energy_exchanged = 0
+        self.energy_tank -= self.energy_exchanged 
         tank_is_empty = self.energy_tank <= self.energy_tank_threshold
         self.energy_avaiable = not tank_is_empty
         self.joints = new_joints 
