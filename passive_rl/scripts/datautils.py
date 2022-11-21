@@ -39,21 +39,24 @@ def multirun_steps(run_paths_list):
         num_steps_list += [run_num_steps_list]
     return num_steps_list
 
-def _smooth(timeframe, values, timesteps): 
-    newtimeframe = np.linspace(timeframe.min(), timeframe.max(), int(timesteps ))
-    # print(f"smoothing: {len(timeframe)} -> {len(newtimeframe)}") 
-    # smooth_returns = interp1d(timeframe, returns, kind='cubic')  
-    # returns = smooth_returns(newtimeframe)  
+def _interpolate(timeframe, values, timesteps): 
+    newtimeframe = np.linspace(timeframe.min(), timeframe.max(), int(timesteps )) 
     spl = make_interp_spline(timeframe, values, k=3)  # type: BSpline
     values = spl(newtimeframe)
     timeframe = newtimeframe
     return timeframe, values 
 
+def _smooth(values, weight=0.9):
+    smoothed = np.array(values)
+    for i in range(1, smoothed.shape[0]):
+        smoothed[i] = smoothed[i-1] * weight + (1 - weight) * smoothed[i]
+    return smoothed
+
 ###########################################################################
 ###########################################################################
 ###########################################################################
 
-def df_episodes_energy(data, smooth=False, etype="min", etank_init=None):
+def df_episodes_energy(data, smooth=False, interpolate=False, etype="min", etank_init=None):
     ''' DataFrame with the energy corresponding to each episode of the loaded training'''
     if etype == "min":
         energy = get_etankmin(data)
@@ -73,13 +76,17 @@ def df_episodes_energy(data, smooth=False, etype="min", etank_init=None):
 
     num_episodes = len(energy)
     timeframe = np.arange(num_episodes)
+    if interpolate:
+        timeframe, energy = _interpolate(timeframe,energy,num_steps(data))
+        timeframe, energy_exiting = _interpolate(timeframe,energy_exiting,num_steps(data))
+        timeframe, norm_level = _interpolate(timeframe,norm_level,num_steps(data))
     if smooth:
-        timeframe, energy = _smooth(timeframe,energy,num_steps(data))
-        timeframe, energy_exiting = _smooth(timeframe,energy_exiting,num_steps(data))
-        timeframe, norm_level = _smooth(timeframe,norm_level,num_steps(data))
+        energy = _smooth(energy)
+        energy_exiting = _smooth(energy_exiting)
+        norm_level = _smooth(norm_level)
     return pd.DataFrame(dict(Episodes = timeframe, Energy = energy, Level=norm_level, Exiting=energy_exiting ))  
 
-def df_run_episodes_energy( run_folder_path, smooth=False, etype = "min", etank_init=None): 
+def df_run_episodes_energy( run_folder_path, smooth=False, interpolate=False, etype = "min", etank_init=None): 
     ''' DataFrame with the energy corresponding to each episode of all the trainings in the given run'''
     comb_df = pd.DataFrame()  
     print(f"Loading logs from: {run_folder_path}")
@@ -90,12 +97,12 @@ def df_run_episodes_energy( run_folder_path, smooth=False, etype = "min", etank_
         if name.startswith("energy_") and ext==".json": 
             file_path = os.path.join(saved_logs_path, file_name)
             data = dataload(file_path) 
-            df = df_episodes_energy(data=data, smooth=smooth, etype=etype, etank_init=etank_init) 
+            df = df_episodes_energy(data=data, smooth=smooth, interpolate=interpolate, etype=etype, etank_init=etank_init) 
             df["Trainings"] = [name]*len(df["Episodes"])
             comb_df = pd.concat([comb_df, df], ignore_index=True)
     return comb_df
 
-def df_multiruns_episodes_energy( run_paths_list, smooth=False, etype = "min", run_label_list=[], etank_init_list=[]):  
+def df_multiruns_episodes_energy( run_paths_list, smooth=False, interpolate=False, etype = "min", run_label_list=[], etank_init_list=[]):  
     ''' DataFrame with the energy corresponding to each episode of all the trainings in the given list of runs'''
     comb_df = pd.DataFrame()   
     for i, run_folder_path in enumerate(run_paths_list): 
@@ -103,7 +110,7 @@ def df_multiruns_episodes_energy( run_paths_list, smooth=False, etype = "min", r
             etank_init = etank_init_list[i]
         else:
             etank_init = None
-        df = df_run_episodes_energy(run_folder_path=run_folder_path, smooth=smooth, etype=etype, etank_init=etank_init) 
+        df = df_run_episodes_energy(run_folder_path=run_folder_path, smooth=smooth, interpolate=interpolate, etype=etype, etank_init=etank_init) 
         if len(run_label_list) > 0:
             run_label = run_label_list[i]
         else:
@@ -115,7 +122,7 @@ def df_multiruns_episodes_energy( run_paths_list, smooth=False, etype = "min", r
      
 ###########################################################################
 
-def df_test_run_energy(run_folder_path, etank_init=None, smooth=False, etype = "min"): 
+def df_test_run_energy(run_folder_path, etank_init=None, smooth=False, interpolate=False, etype = "min"): 
     ''' DataFrame with the energy corresponding to each episode of all the tests in the given run'''
     comb_df = pd.DataFrame()  
     print(f"Loading logs from: {run_folder_path}")
@@ -135,7 +142,7 @@ def df_test_run_energy(run_folder_path, etank_init=None, smooth=False, etype = "
     df = pd.DataFrame(dict(Tests = np.arange(len(energy_values)), Energy = energy_values, Level = tank_levels))    
     return df
 
-def df_test_multirun_energy(run_paths_list, etank_init_list=[], smooth=False, etype = "min", run_label_list=[]):
+def df_test_multirun_energy(run_paths_list, etank_init_list=[], smooth=False, interpolate=False, etype = "min", run_label_list=[]):
     comb_df = pd.DataFrame()   
     for i,run_folder_path in enumerate(run_paths_list): 
         if len(etank_init_list)>0:
@@ -157,7 +164,7 @@ def df_test_multirun_energy(run_paths_list, etank_init_list=[], smooth=False, et
 ###########################################################################
 ###########################################################################
 
-def df_episodes_error(data, smooth=False, cumulative_error=False ):
+def df_episodes_error(data, smooth=False, interpolate=False, cumulative_error=False ):
     ''' DataFrame with the errors corresponding to each episode of the loaded training'''
     if cumulative_error: 
         errors = data["err_pos_tot_episode"]   
@@ -165,11 +172,13 @@ def df_episodes_error(data, smooth=False, cumulative_error=False ):
         errors = data["err_pos_final_episode"]  
     num_episodes = len(errors)
     timeframe = np.arange(num_episodes)
-    if smooth:
-        timeframe, errors = _smooth(timeframe,errors,num_steps(data))
+    if interpolate:
+        timeframe, errors = _interpolate(timeframe,errors,num_steps(data))
+    elif smooth:
+        errors = _smooth(errors)
     return pd.DataFrame(dict(Episodes = timeframe, Errors = errors))  
-
-def df_run_episodes_error( run_folder_path, smooth=False, cumulative_error=False ): 
+ 
+def df_run_episodes_error( run_folder_path, smooth=False, interpolate=False, cumulative_error=False ): 
     ''' DataFrame with the errors corresponding to each episode of all the trainings in the given run'''
     comb_df = pd.DataFrame()  
     print(f"Loading logs from: {run_folder_path}")
@@ -180,16 +189,17 @@ def df_run_episodes_error( run_folder_path, smooth=False, cumulative_error=False
         if name.startswith("errors_") and ext==".json": 
             file_path = os.path.join(saved_logs_path, file_name)
             data = dataload(file_path) 
-            df =  df_episodes_error(data, cumulative_error=cumulative_error)
+            df =  df_episodes_error(data, cumulative_error=cumulative_error, smooth=smooth, interpolate=interpolate)
             df["Trainings"] = [name]*len(df["Episodes"])
             comb_df = pd.concat([comb_df, df], ignore_index=True)
     return comb_df
+ 
 
-def df_multiruns_episodes_error( run_paths_list, smooth=False , run_label_list=[], cumulative_error=False ):  
+def df_multiruns_episodes_error( run_paths_list, smooth=False, interpolate=False , run_label_list=[], cumulative_error=False ):  
     ''' DataFrame with the errors corresponding to each episode of all the trainings in the given list of runs'''
     comb_df = pd.DataFrame()   
     for i, run_folder_path in enumerate(run_paths_list): 
-        df = df_run_episodes_error(run_folder_path, smooth=smooth, cumulative_error=cumulative_error ) 
+        df = df_run_episodes_error(run_folder_path, cumulative_error=cumulative_error, smooth=smooth, interpolate=interpolate) 
         if len(run_label_list) > 0:
             run_label = run_label_list[i]
         else:
@@ -198,10 +208,10 @@ def df_multiruns_episodes_error( run_paths_list, smooth=False , run_label_list=[
         df["Runs"] = [run_label]*len(df["Trainings"])
         comb_df = pd.concat([comb_df, df], ignore_index=True)
     return comb_df 
-
+ 
 ###########################################################################
 
-def df_test_run_errors(run_folder_path, smooth=False): 
+def df_test_run_errors(run_folder_path, smooth=False, interpolate=False): 
     ''' DataFrame with the errors corresponding to each episode of all the tests in the given run''' 
     print(f"Loading logs from: {run_folder_path}")
     saved_errors_test_path = os.path.join(run_folder_path, "errors_eval_run.json")  
@@ -213,7 +223,7 @@ def df_test_run_errors(run_folder_path, smooth=False):
     df = pd.DataFrame(dict(Tests = np.arange(len(errors_values)), Errors = errors_values ))    
     return df
 
-def df_test_multirun_errors(run_paths_list, smooth=False, run_label_list=[] ):
+def df_test_multirun_errors(run_paths_list, smooth=False, interpolate=False, run_label_list=[] ):
     comb_df = pd.DataFrame()   
     for i,run_folder_path in enumerate(run_paths_list): 
         df = df_test_run_errors(run_folder_path, smooth) 

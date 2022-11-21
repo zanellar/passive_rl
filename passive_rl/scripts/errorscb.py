@@ -14,7 +14,7 @@ class ErrorsCallback(BaseLogCallback):
 
     def _on_training_start(self) -> None:
         self.episodes_data = dict(err_pos=[], cos_pos=[], tanh_vel=[])
-        self.training_data = dict(episodes_data=[], err_pos_tot_episode=[])
+        self.training_data = dict(episodes_data=[], err_pos_tot_episode=[],err_pos_final_episode=[])
         self.rollouts = 0    
         return True
 
@@ -23,7 +23,12 @@ class ErrorsCallback(BaseLogCallback):
 
     def _on_step(self) -> bool: 
         sample = self.training_env.env_method("get_sample") 
-        obs, _, _, _, _ = sample[0] 
+        obs, action, reward, done, info = sample[0] 
+
+        if done: 
+            return True
+
+
         sin_pos = obs[0] 
         cos_pos = obs[1] 
         tanh_vel = obs[2]  
@@ -42,7 +47,7 @@ class ErrorsCallback(BaseLogCallback):
         if self._is_episode_end(): 
             self.logger.record('errors/pos_tot_episode', self.err_pos_tot_episode)  # -> tensorboard 
             self.training_data["err_pos_tot_episode"].append(self.err_pos_tot_episode)   
-            self.logger.record('errors/pos_final_episode', self.err_pos_tot_episode)  # -> tensorboard 
+            self.logger.record('errors/pos_final_episode', self.err_pos)  # -> tensorboard 
             self.training_data["err_pos_final_episode"].append(self.err_pos)   
             if self.save_all:
                 self.training_data["episodes_data"].append(self.episodes_data)   

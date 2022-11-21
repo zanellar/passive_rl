@@ -24,8 +24,11 @@ class SaveEnergyLogsCallback(BaseLogCallback):
 
     def _on_step(self) -> bool: 
         sample = self.training_env.env_method("get_sample") 
-        _, _, _, _, info = sample[0]
+        obs, action, reward, done, info = sample[0]
 
+        if done:
+            return True
+        
         energy_tank = info["energy_tank"]
         energy_exchanged = info["energy_exchanged"]
 
@@ -46,10 +49,11 @@ class SaveEnergyLogsCallback(BaseLogCallback):
         self.rollouts += 1
 
         sample = self.training_env.env_method("get_sample") 
-        _, _, _, _, info = sample[0] 
+        obs, action, reward, done, info = sample[0] 
         energy_tank = info["energy_tank"]
 
         if self._is_episode_end(): 
+            self.logger.record('energy_tank/emptyings', self.training_env.env_method("get_energy_stop_ct")[0] )  # -> tensorboard 
             self.logger.record('energy_tank/min', self.energy_tank_min)  # -> tensorboard 
             self.training_data["energy_tank_min"].append(self.energy_tank_min) 
             self.logger.record('energy_tank/max', self.energy_tank_max)  # -> tensorboard 

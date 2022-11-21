@@ -1,12 +1,7 @@
-from math import fabs
-import os 
-from ast import Try
-from pickle import FALSE
-from statistics import mean
-import numpy as np 
+ 
+import os  
 import json
-from stable_baselines3 import HER, SAC, TD3, DDPG    
-from mjrlenvs.scripts.env.envutils import wrapenv 
+from traceback import print_tb 
 from stable_baselines3.common.callbacks import CallbackList, BaseCallback 
 from mjrlenvs.scripts.eval.tester import TestRun 
 from passive_rl.scripts.pkgpaths import PkgPath  
@@ -31,31 +26,13 @@ class TestRunEBud(TestRun):
         err_list = []
         returns_list = []
         episode_return = 0
-        i = 0
+        i = 0 
         while i<=n_eval_episodes: 
             action, _ = self.model.predict(obs, deterministic=True)
-            obs, reward, done, info = self.env.step(action)   
-
-            # return
-            episode_return += reward.item()
+            obs, reward, done, info = self.env.step(action)    
  
-            # position error 
-            sin_pos = obs[0][0]  
-            position_error = abs(1. - sin_pos)
-            if cumulative_error:
-                episode_err += position_error
-            else:
-                episode_err = position_error
-
-            # minimal energy in tank
-            energy = info[0]["energy_tank"]
-            episode_emin = min(energy,episode_emin) if episode_emin is not None else energy 
-
-            if render:
-                self.env.render() # BUG not working cam selection
-
             if done:
-                i +=1 
+
                 obs = self.env.reset()
                 returns_list.append(episode_return) 
                 episode_return = 0 
@@ -63,6 +40,34 @@ class TestRunEBud(TestRun):
                 episode_err = 0 
                 emin_list.append(episode_emin)
                 episode_emin = None 
+                i +=1  
+
+            else:       
+
+                # return
+                episode_return += reward.item()
+    
+                # position error 
+                if self.args.NORMALIZE_ENV is not None:
+                    unnormalized_obs = self.env.get_original_obs()
+                else:
+                    unnormalized_obs = obs
+
+                sin_pos = unnormalized_obs[0][0]  
+                position_error = abs(1. - sin_pos) 
+
+                if cumulative_error:
+                    episode_err += position_error
+                else:
+                    episode_err = position_error
+
+                # minimal energy in tank
+                energy = info[0]["energy_tank"]
+                episode_emin = min(energy,episode_emin) if episode_emin is not None else energy 
+
+            if render:
+                self.env.render() # BUG not working cam selection
+
         
         if save:
             file_path =  os.path.join(self.testing_output_folder_path, f"returns_{model_id}.txt") 

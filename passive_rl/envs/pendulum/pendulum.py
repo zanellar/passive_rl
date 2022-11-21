@@ -15,7 +15,8 @@ class PendulumEBud(EBudBaseEnv):
                 energy_terminate = False,
                 folder_path = None,
                 env_name = "pendulum",
-                hard_reset = True
+                hard_reset = True,
+                reward_id = 0
                 ):
         super(PendulumEBud, self).__init__(
             env = Pendulum(
@@ -23,7 +24,8 @@ class PendulumEBud(EBudBaseEnv):
                 folder_path = folder_path,
                 max_episode_length = max_episode_length, 
                 init_joint_config = init_joint_config,
-                hard_reset = hard_reset
+                hard_reset = hard_reset,
+                reward_id=reward_id
             ),
             energy_tank_init = energy_tank_init, # initial energy in the tank
             energy_tank_threshold = energy_tank_threshold, # minimum energy in the tank  
@@ -53,7 +55,8 @@ class PendulumEBudAw(EBudAwEnv):
                 energy_terminate = False,
                 folder_path = None,
                 env_name = "pendulum",
-                hard_reset = True
+                hard_reset = True,
+                reward_id = 0
                 ):
         super(PendulumEBudAw, self).__init__(
             env = Pendulum(
@@ -61,7 +64,8 @@ class PendulumEBudAw(EBudAwEnv):
                 folder_path = folder_path,
                 max_episode_length = max_episode_length, 
                 init_joint_config = init_joint_config,
-                hard_reset = hard_reset
+                hard_reset = hard_reset,
+                reward_id=reward_id
             ),
             energy_tank_init = energy_tank_init, # initial energy in the tank
             energy_tank_threshold = energy_tank_threshold, # minimum energy in the tank  

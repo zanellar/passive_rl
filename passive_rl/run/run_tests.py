@@ -14,7 +14,7 @@ def test(x=None, test_id=""):
     if x is not None:
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
-    data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True, cumulative_error=True)
+    data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True, render=False, cumulative_error=False)
     return np.amin(data["emin"])
 
 ###########################################################################
@@ -25,7 +25,7 @@ test(
     x = dict(
             RUN_ID = "etank_inf",
             ENVIRONMENT = "pendulum",
-            ENERGY_TANK_INIT = min_etank_init,
+            ENERGY_TANK_INIT = 1000,
             ENERGY_AWARE = False,
             INIT_JOINT_CONFIG =  "random"
         ),
@@ -42,7 +42,7 @@ test(
     ),
     test_id="min"
 )
-
+exit()
 test(
     dict(
         RUN_ID = "etank_min08",

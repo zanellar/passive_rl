@@ -29,13 +29,13 @@ class Args(DefaultArgs):
   
     AGENT = "SAC"  
     AGENT_PARAMS = dict(
-        seed = [17,29,67,157,109,211,277,331,359,419], # [29,157,211,277,359] #TODO
+        seed = [29,157,211,277,359], #[17,29,67,157,109,211,277,331,359,419] #TODO
         buffer_size = [int(1e6)],
         batch_size = [256],
         learning_starts = [1*EXPL_EPISODE_HORIZON],  
         train_freq = [(500,"step") ], 
-        gradient_steps = [1000],
-        learning_rate = [ linear_schedule(3e-3) ], # 1e-3
+        gradient_steps = [500], #1000
+        learning_rate = [ linear_schedule(5e-3) ], # 3e-3
         gamma = [0.99],
         tau = [3e-3],
         noise = ["gauss"],
@@ -51,9 +51,12 @@ class Args(DefaultArgs):
     @staticmethod
     def set(args): 
         Args.RUN_ID = args["RUN_ID"]
-        Args.ENVIRONMENT = args["ENVIRONMENT"] 
-        Args.ENERGY_TANK_INIT = args["ENERGY_TANK_INIT"]
-        Args.INIT_JOINT_CONFIG = args["INIT_JOINT_CONFIG"]
+        Args.ENERGY_TANK_INIT = args["ENERGY_TANK_INIT"] 
+        Args.ENVIRONMENT = args["ENVIRONMENT"]  if "ENVIRONMENT" in args.keys() else "pendulum" 
+        Args.INIT_JOINT_CONFIG = args["INIT_JOINT_CONFIG"] if "INIT_JOINT_CONFIG" in args.keys() else "random"
+        Args.ENERGY_TERMINATE  = args["ENERGY_TERMINATE"]  if "ENERGY_TERMINATE" in args.keys() else False
+        Args.REWARD_ID = args["REWARD_ID"]  if "REWARD_ID" in args.keys() else 0
+
         if args["ENERGY_AWARE"]:
             Args.NORMALIZE_ENV = dict(training=True, norm_obs=True, norm_reward=True, clip_obs=np.inf, clip_reward=10) 
             Args.ENV_EXPL = PendulumEBudAw(
@@ -80,7 +83,9 @@ class Args(DefaultArgs):
                         energy_tank_threshold = 0, # minimum energy in the tank  
                         init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
                         folder_path = PkgPath.ENV_DESC_FOLDER,
-                        env_name =Args.ENVIRONMENT
+                        env_name = Args.ENVIRONMENT,
+                        energy_terminate = Args.ENERGY_TERMINATE, 
+                        reward_id = Args.REWARD_ID  
                     )
 
             Args.ENV_EVAL = PendulumEBud(
@@ -90,6 +95,8 @@ class Args(DefaultArgs):
                         init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
                         folder_path = PkgPath.ENV_DESC_FOLDER,
                         env_name = Args.ENVIRONMENT,
-                        hard_reset = False
+                        hard_reset = False,
+                        energy_terminate = Args.ENERGY_TERMINATE, 
+                        reward_id = Args.REWARD_ID
                     )
             

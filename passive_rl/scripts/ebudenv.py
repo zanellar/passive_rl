@@ -1,4 +1,5 @@
  
+from traceback import print_tb
 import numpy as np 
 import gym
 from pyparsing import replaceWith 
@@ -83,14 +84,14 @@ class EBudBaseEnv(gym.Env):
         _obs, _reward, _done, _info = self.env.step(action) 
 
         # Energy Budgeting  
-        tank_is_empty = self._update_energy_tank() 
+        self._update_energy_tank() 
      
         if self.energy_terminate: 
-            done = tank_is_empty or  _done 
+            done = _done or not self.energy_avaiable 
         else:
             done = _done  
   
-        if tank_is_empty:
+        if not self.energy_avaiable:
             self.energy_stop_ct += 1
          
         info = dict(energy_exchanged = self.energy_exchanged,
@@ -101,7 +102,7 @@ class EBudBaseEnv(gym.Env):
         self.obs = _obs  
         self.reward = _reward
         self.done = done
-        self.info = info
+        self.info = info 
 
         return self.obs, self.reward, self.done, self.info
 
@@ -114,6 +115,9 @@ class EBudBaseEnv(gym.Env):
 
     def render(self, mode=None): 
         self.env.render()
+
+    def get_energy_stop_ct(self):
+        return self.energy_stop_ct
    
     def get_sample(self):
         return self.obs, self.action, self.reward, self.done, self.info

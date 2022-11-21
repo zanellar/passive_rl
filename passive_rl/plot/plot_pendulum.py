@@ -24,7 +24,9 @@ label_min06_eaw = "$\phi_{E^*_{0.6}}^{aw}$"
 label_min03_eaw = "$\phi_{E^*_{0.3}}^{aw}$"
 
 plotter = PlotterEBud(out_train_folder = out_train_folder, out_test_folder = out_test_folder, plot_folder = plot_folder) 
- 
+
+smooth = False
+
  
 ###############################################################################################################################
 ###############################################################################################################################
@@ -48,11 +50,11 @@ plot_name = "etankinit_infmin"
 
 plotter.multirun_energyexiting_train(env_run_ids = train_env_run_ids, etank_init_list = etank_init_list, 
                                     labels = labels, ylabels = "Energy", show = False, plot_name = plot_name, 
-                                    ext = "pdf", xlim = [0,50], xsteps = False)  
+                                    ext = "pdf", xlim = [0,50], xsteps = False, smooth=False)  
 plotter.multirun_returns_train(env_run_ids = train_env_run_ids, labels = labels, show = False, plot_name = plot_name, 
-                                ext = "pdf", xlim = [0,200], xsteps = False)
+                                ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
 plotter.multirun_poserror_train(env_run_ids = train_env_run_ids, labels = labels, show = False, plot_name = plot_name, 
-                                ext = "pdf", xlim = [0,200], xsteps = False)
+                                ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
  
 ###############################################################################################################################
 
@@ -130,13 +132,13 @@ plot_name = "etankinit_mincuts"
 #####
 
 plotter.multirun_tanklevel_train( env_run_ids = train_env_run_ids, labels = labels, etank_init_list = etank_init_list, 
-                                show = False, plot_name = plot_name, ext = "pdf", xlim = [0,200], xsteps = False)
+                                show = False, plot_name = plot_name, ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
 
 plotter.multirun_returns_train( env_run_ids = train_env_run_ids, labels = labels, show = False, plot_name = plot_name, 
-                                ext = "pdf", xlim = [0,200], xsteps = False)
+                                ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
 
 plotter.multirun_poserror_train( env_run_ids = train_env_run_ids, labels = labels, show = False, plot_name = plot_name, 
-                                ext = "pdf", xlim = [0,200], xsteps = False)
+                                ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
 
 ###############################################################################################################################
 
@@ -212,13 +214,13 @@ plot_name = "etankinit_mincuts_eaw"
 #####
 
 plotter.multirun_tanklevel_train( env_run_ids = train_env_run_ids, labels = labels, etank_init_list = etank_init_list, 
-                                show = False, plot_name = plot_name, ext = "pdf", xlim = [0,200], xsteps = False)
+                                show = False, plot_name = plot_name, ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
 
 plotter.multirun_poserror_train( env_run_ids = train_env_run_ids, labels = labels, show = False, plot_name = plot_name, 
-                                ext = "pdf", xlim = [0,200], xsteps = False)
+                                ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
 
 plotter.multirun_returns_train( env_run_ids = train_env_run_ids, labels = labels, show = False, plot_name = plot_name, 
-                                ext = "pdf", xlim = [0,200], xsteps = False)
+                                ext = "pdf", xlim = [0,200], xsteps = False, smooth=smooth)
 
 ###############################################################################################################################
 
