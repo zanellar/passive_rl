@@ -20,16 +20,18 @@ class TestRunEBud(TestRun):
     def eval_model(self, model_id="random", n_eval_episodes=30, cumulative_error=False, render=False, save=False): 
         self._loadmodel(model_id) 
         obs = self.env.reset() 
-        episode_emin = None
+        energy = []
         emin_list = []
         episode_err = 0
         err_list = []
         returns_list = []
         episode_return = 0
         i = 0 
-        while i<=n_eval_episodes: 
+        while i<n_eval_episodes: 
             action, _ = self.model.predict(obs, deterministic=True)
-            obs, reward, done, info = self.env.step(action)    
+            obs, reward, done, info = self.env.step(action) 
+
+            energy_tank = info[0]["energy_tank"]   
  
             if done:
 
@@ -37,9 +39,9 @@ class TestRunEBud(TestRun):
                 returns_list.append(episode_return) 
                 episode_return = 0 
                 err_list.append(episode_err)
-                episode_err = 0 
-                emin_list.append(episode_emin)
-                episode_emin = None 
+                episode_err = 0  
+                emin_list.append(min(energy) if len(energy)>0 else energy_tank)
+                energy = [] 
                 i +=1  
 
             else:       
@@ -61,14 +63,12 @@ class TestRunEBud(TestRun):
                 else:
                     episode_err = position_error
 
-                # minimal energy in tank
-                energy = info[0]["energy_tank"]
-                episode_emin = min(energy,episode_emin) if episode_emin is not None else energy 
+                # minimal energy in tank 
+                energy.append(energy_tank)
 
             if render:
                 self.env.render() # BUG not working cam selection
-
-        
+  
         if save:
             file_path =  os.path.join(self.testing_output_folder_path, f"returns_{model_id}.txt") 
             with open(file_path, 'w') as file:  
@@ -78,7 +78,7 @@ class TestRunEBud(TestRun):
                 file.write(emin_list)  
             file_path =  os.path.join(self.testing_output_folder_path, f"errors_{model_id}.txt") 
             with open(file_path, 'w') as file:  
-                file.write(err_list)  
+                file.write(err_list)    
 
         return dict(emin=emin_list, err=err_list, ret=returns_list)
 
@@ -96,12 +96,12 @@ class TestRunEBud(TestRun):
             if prefix == "log":  
                 print(f"Evaluating {model_id}")
                 model_eval_data = self.eval_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, cumulative_error=cumulative_error, save=False) 
-                run_eval_retdata += model_eval_data["ret"] 
+                run_eval_retdata += model_eval_data["ret"]  
                 run_eval_emindata += model_eval_data["emin"] 
                 run_eval_errdata += model_eval_data["err"]
-                data_ret[model_id] = run_eval_retdata
-                data_emin[model_id] = run_eval_emindata
-                data_err[model_id] = run_eval_errdata
+                data_ret[model_id] = model_eval_data["ret"]  
+                data_emin[model_id] = model_eval_data["emin"] 
+                data_err[model_id] = model_eval_data["err"]
 
         if plot:
             pass #TODO   
@@ -119,5 +119,5 @@ class TestRunEBud(TestRun):
             with open(file_path, 'w') as f:
                 json.dump(data_err, f) 
          
-        return dict(emin=data_emin, err=data_err, ret=data_ret)
+        return dict(emin=run_eval_emindata, err=run_eval_errdata, ret=run_eval_retdata)
  

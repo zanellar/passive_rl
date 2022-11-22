@@ -7,7 +7,7 @@ from passive_rl.scripts.tester import TestRunEBud
 from passive_rl.run.pendulum_configs import Args 
 from passive_rl.envs.pendulum.pendulum import PendulumEBud,PendulumEBudAw
 
-n_eval_episodes = 50
+n_eval_episodes = 100
 
 run_results_file_path = os.path.join(PkgPath.OUT_TRAIN_FOLDER,"run_results.txt")  
 with open(run_results_file_path, 'w') as file: 
