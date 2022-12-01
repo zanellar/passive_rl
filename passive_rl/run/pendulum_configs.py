@@ -65,7 +65,8 @@ class Args(DefaultArgs):
                             energy_tank_threshold = 0, # minimum energy in the tank  
                             init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
                             folder_path = PkgPath.ENV_DESC_FOLDER,
-                            env_name = Args.ENVIRONMENT
+                            env_name = Args.ENVIRONMENT, 
+                            reward_id = Args.REWARD_ID  
                         ) 
             Args.ENV_EVAL = PendulumEBudAw(
                             max_episode_length = Args.EVAL_EPISODE_HORIZON,  
@@ -73,7 +74,8 @@ class Args(DefaultArgs):
                             energy_tank_threshold = 0, # minimum energy in the tank  
                             init_joint_config = Args.INIT_JOINT_CONFIG,# [-1.57] or "random"
                             folder_path = PkgPath.ENV_DESC_FOLDER,
-                            env_name = Args.ENVIRONMENT
+                            env_name = Args.ENVIRONMENT, 
+                            reward_id = Args.REWARD_ID  
                         )    
         else:
             Args.NORMALIZE_ENV = dict(training=True, norm_obs=True, norm_reward=True, clip_obs=1, clip_reward=10)

@@ -82,6 +82,9 @@ class PendulumEBudAw(EBudAwEnv):
         return self.action
 
     def upgrade_reward(self,reward):  
-        reward += 0.5*(self.energy_tank-self.energy_tank_init)
-        return reward
+        if self.reward_id == 0:
+            new_reward = reward - 0.5*(self.energy_tank_init-self.energy_tank)
+        elif self.reward_id == 1:
+            new_reward = reward/(reward + 0.5*abs(self.energy_tank-self.energy_tank_init))
+        return new_reward
             

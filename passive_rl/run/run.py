@@ -27,7 +27,7 @@ def train_and_test(x, test_id=""):
     min_emin = test(x, test_id=test_id) 
  
     with open(run_results_file_path, 'a') as file: 
-        line = f"\n {Args.RUN_ID} {Args.ENVIRONMENT}, {Args.ENV_EXPL.energy_tank_init}, {min_emin}"   
+        line = f"\n{Args.RUN_ID} {Args.ENVIRONMENT} {Args.ENV_EXPL.energy_tank_init} {min_emin}"   
         file.write(line)
 
     return min_emin
@@ -41,7 +41,9 @@ min_emin = train_and_test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False ,
-        INIT_JOINT_CONFIG = "random"
+        INIT_JOINT_CONFIG = "random",
+        ENERGY_TERMINATE = True,
+        REWARD_ID = 1
     ),
     test_id="inf"
 )
@@ -54,7 +56,9 @@ test(
             ENVIRONMENT = "pendulum",
             ENERGY_TANK_INIT = min_etank_init,
             ENERGY_AWARE = False,
-            INIT_JOINT_CONFIG =  "random"
+            INIT_JOINT_CONFIG =  "random",
+            ENERGY_TERMINATE = True,
+            REWARD_ID = 1
         ),
     test_id="min"
 )
@@ -65,7 +69,9 @@ train_and_test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  "random" 
+        INIT_JOINT_CONFIG =  "random" ,
+        ENERGY_TERMINATE = True,
+        REWARD_ID = 1
     ),
     test_id="min"
 )
@@ -78,7 +84,9 @@ train_and_test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init*0.8,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  "random"
+        INIT_JOINT_CONFIG =  "random",
+        ENERGY_TERMINATE = True,
+        REWARD_ID = 1
     ),
     test_id="min08"
 )
@@ -89,7 +97,9 @@ train_and_test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init*0.6,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  "random" 
+        INIT_JOINT_CONFIG =  "random" ,
+        ENERGY_TERMINATE = True,
+        REWARD_ID = 1
     ),
     test_id="min06"
 )
@@ -100,43 +110,9 @@ train_and_test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init*0.3,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  "random"
+        INIT_JOINT_CONFIG =  "random",
+        ENERGY_TERMINATE = True,
+        REWARD_ID = 1
     ),
     test_id="min03"
-)
-
- #############################################
-
-train_and_test(
-    dict(
-        RUN_ID = "etank_min08eaw",
-        ENVIRONMENT = "pendulum",
-        ENERGY_TANK_INIT = min_etank_init*0.8,
-        ENERGY_AWARE = True,
-        INIT_JOINT_CONFIG =  "random"  
-    ),
-    test_id="min08eaw"
-)
-
-train_and_test(
-    dict(
-        RUN_ID = "etank_min06eaw",
-        ENVIRONMENT = "pendulum",
-        ENERGY_TANK_INIT = min_etank_init*0.6,
-        ENERGY_AWARE = True,
-        INIT_JOINT_CONFIG =  "random"
-    ),
-    test_id="min06eaw"
-)
-
-train_and_test(
-    dict(
-        RUN_ID = "etank_min03eaw",
-        ENVIRONMENT = "pendulum",
-        ENERGY_TANK_INIT = min_etank_init*0.3,
-        ENERGY_AWARE = True,
-        INIT_JOINT_CONFIG =  "random" 
-    ),
-    test_id="min03eaw"
-)
- 
+) 

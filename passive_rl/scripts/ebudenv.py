@@ -115,6 +115,10 @@ class EBudBaseEnv(gym.Env):
     def render(self, mode=None): 
         self.env.render()
 
+    def close(self) -> None:
+        self.energy_stop_ct = 0
+        return super().close()
+
     def get_energy_stop_ct(self):
         return self.energy_stop_ct
    
