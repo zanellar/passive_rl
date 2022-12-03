@@ -11,12 +11,16 @@ class EBudBaseEnv(gym.Env):
                 energy_tank_threshold = 0, # minimum energy in the tank  
                 debug = False,
                 energy_terminate = False,
-                recycle_energy = False 
+                recycle_energy = False,
+                non_neg_reward = False,
+                reward_offset = 0
                 ):
         super(EBudBaseEnv, self).__init__()
 
         self.energy_terminate = energy_terminate
         self.debug = debug 
+        self.non_neg_reward = non_neg_reward
+        self.reward_offset = reward_offset
 
         ################# Init Learning Environment ####################
 
@@ -46,7 +50,7 @@ class EBudBaseEnv(gym.Env):
 
         self.energy_stop_ct = 0
 
-        self.joints = None
+        self.joints = None 
         
     def _update_energy_tank(self):
         ''' 
@@ -89,6 +93,9 @@ class EBudBaseEnv(gym.Env):
             done = _done or not self.energy_avaiable 
         else:
             done = _done  
+ 
+        if self.non_neg_reward:
+            _reward = max(0,_reward + self.reward_offset) 
   
         if not self.energy_avaiable:
             self.energy_stop_ct += 1
