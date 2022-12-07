@@ -17,11 +17,13 @@ class TestRunEBud(TestRun):
         os.rename(src=self.testing_output_folder_path, dst=new_testing_output_folder_path)
         self.testing_output_folder_path = new_testing_output_folder_path
     
-    def eval_model(self, model_id="random", n_eval_episodes=30, cumulative_error=False, render=False, save=False): 
+    def eval_model(self, model_id="random", n_eval_episodes=30, cumulative_error=False, render=False): 
         self._loadmodel(model_id) 
         obs = self.env.reset() 
-        energy = []
-        emin_list = []
+        energy_tank_list = []
+        episode_energy = {}
+        energy_exchanged_list = []
+        etankmin_list = []
         episode_err = 0
         err_list = []
         returns_list = []
@@ -31,7 +33,8 @@ class TestRunEBud(TestRun):
             action, _ = self.model.predict(obs, deterministic=True)
             obs, reward, done, info = self.env.step(action) 
 
-            energy_tank = info[0]["energy_tank"]   
+            energy_tank = info[0]["energy_tank"]    
+            energy_exchanged = info[0]["energy_exchanged"]   
  
             if done:
 
@@ -40,8 +43,9 @@ class TestRunEBud(TestRun):
                 episode_return = 0 
                 err_list.append(episode_err)
                 episode_err = 0  
-                emin_list.append(min(energy) if len(energy)>0 else energy_tank)
-                energy = [] 
+                etankmin_list.append(min(energy_tank_list) if len(energy_tank_list)>0 else energy_tank)
+                energy_tank_list = [] 
+                episode_energy[str(i)] = energy_exchanged_list
                 i +=1  
 
             else:       
@@ -64,43 +68,46 @@ class TestRunEBud(TestRun):
                     episode_err = position_error
 
                 # minimal energy in tank 
-                energy.append(energy_tank)
+                energy_tank_list.append(energy_tank)
+
+                # energy exchanged during the episode
+                energy_exchanged_list.append(energy_exchanged)
 
             if render:
                 self.env.render() # BUG not working cam selection
-  
-        if save:
-            file_path =  os.path.join(self.testing_output_folder_path, f"returns_{model_id}.txt") 
-            with open(file_path, 'w') as file:  
-                file.write(returns_list)  
-            file_path =  os.path.join(self.testing_output_folder_path, f"energy_{model_id}.txt") 
-            with open(file_path, 'w') as file:  
-                file.write(emin_list)  
-            file_path =  os.path.join(self.testing_output_folder_path, f"errors_{model_id}.txt") 
-            with open(file_path, 'w') as file:  
-                file.write(err_list)    
+   
 
-        return dict(emin=emin_list, err=err_list, ret=returns_list)
+        return dict(etankmin=etankmin_list, err=err_list, ret=returns_list, episode_energy = episode_energy)
 
     def eval_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname="", cumulative_error=False):  
-        data_emin = {}
+
+        data_etankmin = {}
+        data_energy = {}
         data_err = {}
         data_ret = {}
+
         run_training_logs_folder_path = os.path.join(self.training_output_folder_path,"logs")
-        run_eval_emindata = []
+
+        run_eval_etankmindata = []
         run_eval_errdata = []
         run_eval_retdata = []
+
         for file_name in os.listdir(run_training_logs_folder_path):  
+
             name = os.path.splitext(file_name)[0]
             prefix, model_id = name.split(sep="_", maxsplit=1)
+
             if prefix == "log":  
                 print(f"Evaluating {model_id}")
-                model_eval_data = self.eval_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, cumulative_error=cumulative_error, save=False) 
+                model_eval_data = self.eval_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, cumulative_error=cumulative_error ) 
+                
                 run_eval_retdata += model_eval_data["ret"]  
-                run_eval_emindata += model_eval_data["emin"] 
+                run_eval_etankmindata += model_eval_data["etankmin"] 
                 run_eval_errdata += model_eval_data["err"]
+
                 data_ret[model_id] = model_eval_data["ret"]  
-                data_emin[model_id] = model_eval_data["emin"] 
+                data_etankmin[model_id] = model_eval_data["etankmin"] 
+                data_energy[model_id] = model_eval_data["episode_energy"]
                 data_err[model_id] = model_eval_data["err"]
 
         if plot:
@@ -111,13 +118,17 @@ class TestRunEBud(TestRun):
             with open(file_path, 'w') as f:
                 json.dump(data_ret, f) 
 
+            file_path =  os.path.join(self.testing_output_folder_path, "etank_eval_run.json") 
+            with open(file_path, 'w') as f:
+                json.dump(data_etankmin, f) 
+
             file_path =  os.path.join(self.testing_output_folder_path, "energy_eval_run.json") 
             with open(file_path, 'w') as f:
-                json.dump(data_emin, f) 
+                json.dump(data_energy, f) 
 
             file_path =  os.path.join(self.testing_output_folder_path, "errors_eval_run.json") 
             with open(file_path, 'w') as f:
                 json.dump(data_err, f) 
          
-        return dict(emin=run_eval_emindata, err=run_eval_errdata, ret=run_eval_retdata)
+        return dict(etankmin=run_eval_etankmindata, err=run_eval_errdata, ret=run_eval_retdata)
  

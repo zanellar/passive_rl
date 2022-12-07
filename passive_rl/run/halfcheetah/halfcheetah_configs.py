@@ -2,7 +2,7 @@ import numpy as np
 from mjrlenvs.scripts.train.trainer import run 
 from mjrlenvs.scripts.train.trainutils import linear_schedule 
 from mjrlenvs.scripts.args.runargsbase import DefaultArgs 
-from passive_rl.envs.pendulum.halfcheetah import HalfCheetahEBud, HalfCheetahEBudAw
+from passive_rl.envs.halfcheetah import HalfCheetahEBud, HalfCheetahEBudAw
 from passive_rl.scripts.pkgpaths import PkgPath
 from passive_rl.scripts.energycb import SaveEnergyLogsCallback 
 from passive_rl.scripts.errorscb import ErrorsCallback  
@@ -16,12 +16,12 @@ class Args(DefaultArgs):
     TRAINING_EPISODES = 1000 # episodes
     EXPL_EPISODE_HORIZON = 1000 # timesteps 
     EVAL_EPISODE_HORIZON = 1000 # timesteps  
-    EVAL_MODEL_FREQ = 20 # episodes
+    EVAL_MODEL_FREQ = 200 # episodes
     NUM_EVAL_EPISODES = 1
     NUM_EVAL_EPISODES_BEST_MODEL = 1
     EARLY_STOP = False 
 
-    ENV_EVAL_RENDERING = True
+    ENV_EVAL_RENDERING = False
     SAVE_EVAL_MODEL_WEIGHTS = True 
     SAVE_CHECKPOINTS = True
     SAVE_ALL_TRAINING_LOGS = False

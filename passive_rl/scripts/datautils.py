@@ -121,34 +121,33 @@ def df_multiruns_episodes_energy( run_paths_list, smooth=False, interpolate=Fals
      
 ###########################################################################
 
-def df_test_run_energy(run_folder_path, etank_init=None, smooth=False, interpolate=False, etype = "min"): 
+def df_test_run_etank(run_folder_path, etank_init=None ): 
     ''' DataFrame with the energy corresponding to each episode of all the tests in the given run'''
-    comb_df = pd.DataFrame()  
     print(f"Loading logs from: {run_folder_path}")
-    saved_energy_test_path = os.path.join(run_folder_path, "energy_eval_run.json")  
-    data = dataload(saved_energy_test_path)
-    energy_values = []
+    saved_etank_test_path = os.path.join(run_folder_path, "etank_eval_run.json")  
+    data = dataload(saved_etank_test_path)
+    etank_values = []
     tank_levels = []
-    for energy in data.values():
+    for etank in data.values():
         if etank_init is not None:
-            energy_exiting = etank_init - np.array(energy) 
+            energy_exiting = etank_init - np.array(etank) 
             norm_level =  1 - energy_exiting/etank_init  
         else:
-            norm_level = np.zeros(len(energy))  
+            norm_level = np.zeros(len(etank))  
  
-        energy_values = np.concatenate([energy_values,np.array(energy)])
+        etank_values = np.concatenate([etank_values,np.array(etank)])
         tank_levels = np.concatenate([tank_levels,norm_level])
-    df = pd.DataFrame(dict(Tests = np.arange(len(energy_values)), Energy = energy_values, Level = tank_levels))    
+    df = pd.DataFrame(dict(Tests = np.arange(len(etank_values)), Energy = etank_values, Level = tank_levels))    
     return df
 
-def df_test_multirun_energy(run_paths_list, etank_init_list=[], smooth=False, interpolate=False, etype = "min", run_label_list=[]):
+def df_test_multirun_etank(run_paths_list, etank_init_list=[], run_label_list=[]):
     comb_df = pd.DataFrame()   
     for i,run_folder_path in enumerate(run_paths_list): 
         if len(etank_init_list)>0:
             etank_init = etank_init_list[i]
         else:
             etank_init = None
-        df = df_test_run_energy(run_folder_path, etank_init, smooth, etype) 
+        df = df_test_run_etank(run_folder_path, etank_init ) 
         if len(run_label_list) > 0:
             run_label = run_label_list[i]
         else: 
@@ -158,6 +157,39 @@ def df_test_multirun_energy(run_paths_list, etank_init_list=[], smooth=False, in
         comb_df = pd.concat([comb_df, df], ignore_index=True)
     return comb_df 
 
+def df_test_run_energy(run_folder_path, smooth=False ): 
+    ''' DataFrame with the energy corresponding to each episode of all the tests in the given run'''
+    print(f"Loading logs from: {run_folder_path}")
+    saved_energy_test_path = os.path.join(run_folder_path, "energy_eval_run.json")  
+    data = dataload(saved_energy_test_path)
+    run_df = pd.DataFrame()
+    for model_id in data.keys():   
+        for episode in ["1","2","3"]:#data[model_id].keys():
+            episode_energy = data[model_id][episode]
+            num_steps = len(episode_energy) 
+            timeframe = np.arange(num_steps)  
+            total_energy = [sum(episode_energy[:k+1]) for k in timeframe ] 
+            if smooth:
+                episode_energy = _smooth(episode_energy) 
+            print(f"model:{model_id} - ep:{episode}")
+            df = pd.DataFrame(dict(Steps = timeframe, Energy = episode_energy, TotalEnergy = total_energy, Tests=f"{model_id}_ep{episode}" ))    
+            run_df = pd.concat([run_df, df], ignore_index=True)
+    return run_df  
+
+def df_test_multirun_energy( run_paths_list, smooth=False,   run_label_list=[] ):  
+    ''' DataFrame with the energy corresponding to each episode of all the trainings in the given list of runs'''
+    comb_df = pd.DataFrame()   
+    for i, run_folder_path in enumerate(run_paths_list):  
+        df = df_test_run_energy(run_folder_path=run_folder_path, smooth=smooth ) 
+        if len(run_label_list) > 0:
+            run_label = run_label_list[i]
+        else:
+            env_id, run_id  = run_folder_path.split("/")[-2:]  
+            run_label = env_id+"_"+run_id 
+        df["Runs"] = [run_label]*len(df["Tests"])
+        comb_df = pd.concat([comb_df, df], ignore_index=True)
+    return comb_df 
+ 
  
 ###########################################################################
 ###########################################################################

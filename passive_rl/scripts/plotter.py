@@ -138,7 +138,7 @@ class PlotterEBud(Plotter):
             plot_name = str(len(env_run_ids))
         run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
         
-        data = df_test_multirun_energy(run_paths_list=run_paths_list, etank_init_list=etank_init_list) 
+        data = df_test_multirun_etank(run_paths_list=run_paths_list, etank_init_list=etank_init_list) 
         save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_{plot_type}_multirun_energytank_test.{ext}")
 
         self._stat_plot(
@@ -159,12 +159,40 @@ class PlotterEBud(Plotter):
 
     ##############################################################################################################################################################
  
+    def multirun_energyexiting_test(self, env_run_ids, labels=[], xlabels=None, ylabels=None , xsteps=False, smooth=False,  save=True, show=True, plot_name=None, plot_type="histplot", ext="pdf", xlim=[None,None], ylim=[None,None]): 
+        if plot_name == None:
+            plot_name = str(len(env_run_ids))
+        run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
+        
+        data = df_test_multirun_energy(run_paths_list=run_paths_list, smooth=smooth, run_label_list=labels, ) 
+        save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_{plot_type}_multirun_energyexiting_test.{ext}")
+
+        self._line_plot(
+            data = data,
+            x =  "Steps", 
+            y = "TotalEnergy",  
+            hue = "Runs", 
+            xsteps = xsteps,
+            run_paths_list = run_paths_list,
+            labels = labels,
+            xlabels = xlabels,
+            ylabels = ylabels,
+            xlim = xlim,
+            ylim = ylim,
+            show = show,
+            save = save,
+            save_path = save_path,
+            ext = ext
+        )   
+ 
+    ##############################################################################################################################################################
+ 
     def multirun_tanklevel_test(self, env_run_ids, labels=[], xlabels=None, ylabels=None, etank_init_list=[], save=True, show=True, plot_name=None, plot_type="histplot", ext="pdf"): 
         if plot_name == None:
             plot_name = str(len(env_run_ids))
         run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
         
-        data = df_test_multirun_energy(run_paths_list=run_paths_list, etank_init_list=etank_init_list) 
+        data = df_test_multirun_etank(run_paths_list=run_paths_list, etank_init_list=etank_init_list) 
         save_path = os.path.join(self.save_multirun_testing_plots_path, f"{plot_name}_{plot_type}_multirun_tanklevel_test.{ext}")
 
         self._stat_plot(

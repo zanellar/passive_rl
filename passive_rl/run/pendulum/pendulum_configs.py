@@ -2,7 +2,7 @@ import numpy as np
 from mjrlenvs.scripts.train.trainer import run 
 from mjrlenvs.scripts.train.trainutils import linear_schedule 
 from mjrlenvs.scripts.args.runargsbase import DefaultArgs 
-from passive_rl.envs.pendulum.pendulum import PendulumEBud, PendulumEBudAw
+from passive_rl.envs.pendulum import PendulumEBud, PendulumEBudAw
 from passive_rl.scripts.pkgpaths import PkgPath
 from passive_rl.scripts.energycb import SaveEnergyLogsCallback 
 from passive_rl.scripts.errorscb import ErrorsCallback  
