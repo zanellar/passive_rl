@@ -164,7 +164,7 @@ def df_test_run_energy(run_folder_path, smooth=False ):
     data = dataload(saved_energy_test_path)
     run_df = pd.DataFrame()
     for model_id in data.keys():   
-        for episode in ["1","2","3"]:#data[model_id].keys():
+        for episode in data[model_id].keys():
             episode_energy = data[model_id][episode]
             num_steps = len(episode_energy) 
             timeframe = np.arange(num_steps)  

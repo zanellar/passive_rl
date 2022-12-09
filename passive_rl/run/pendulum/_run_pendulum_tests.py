@@ -6,6 +6,7 @@ from passive_rl.scripts.pkgpaths import PkgPath
 from passive_rl.scripts.tester import TestRunEBud  
 from passive_rl.run.pendulum.pendulum_configs import Args 
 from passive_rl.envs.pendulum import PendulumEBud,PendulumEBudAw
+from passive_rl.scripts.statistics import confidence_interval
 
  
 def test(x=None, test_id="", n_eval_episodes = 100):    
@@ -13,11 +14,12 @@ def test(x=None, test_id="", n_eval_episodes = 100):
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
     data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True, render=False, cumulative_error=False)
-    return np.amin(data["etankmin"])
+    err_min, err_max = confidence_interval(data=data["etankmin"], width=99) 
+    return err_min
 
 ###########################################################################
 
-min_etankmin = 985.1162415689222 #input("min_etankmin = ")
+min_etankmin = 997.7762083274018 #input("min_etankmin = ")
 min_etank_init = 1000 - min_etankmin
  
 test(
@@ -26,12 +28,12 @@ test(
             ENVIRONMENT = "pendulum",
             ENERGY_TANK_INIT = 1000,
             ENERGY_AWARE = False,
-            INIT_JOINT_CONFIG =  [-np.pi/2],
+            INIT_JOINT_CONFIG = "random",
             ENERGY_TERMINATE = True,
             REWARD_ID = 1
         ),
     test_id="inf", 
-    n_eval_episodes = 1
+    n_eval_episodes = 100
 )
 
 test(
@@ -40,12 +42,12 @@ test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  [-np.pi/2],
+        INIT_JOINT_CONFIG = "random" ,
         ENERGY_TERMINATE = True,
         REWARD_ID = 1
     ),
     test_id="min", 
-    n_eval_episodes = 1
+    n_eval_episodes = 100
 )
 
 
@@ -55,15 +57,15 @@ test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  [-np.pi/2],
+        INIT_JOINT_CONFIG = "random" ,
         ENERGY_TERMINATE = True,
         REWARD_ID = 1
     ),
     test_id="min", 
-    n_eval_episodes = 1
+    n_eval_episodes = 100
 )
 
-##################################################################################
+# ##################################################################################
 
 # test(
 #     dict(
@@ -71,12 +73,12 @@ test(
 #         ENVIRONMENT = "pendulum",
 #         ENERGY_TANK_INIT = min_etank_init*0.6,
 #         ENERGY_AWARE = False,
-#         INIT_JOINT_CONFIG =  [-np.pi/2],
+#         INIT_JOINT_CONFIG = "random" ,
 #         ENERGY_TERMINATE = True,
 #         REWARD_ID = 1
 #     ),
 #     test_id="min06", 
-#     n_eval_episodes = 1
+#     n_eval_episodes = 10
 # )
 
 # test(
@@ -85,12 +87,12 @@ test(
 #         ENVIRONMENT = "pendulum",
 #         ENERGY_TANK_INIT = min_etank_init*0.3,
 #         ENERGY_AWARE = False,
-#         INIT_JOINT_CONFIG =  [-np.pi/2] ,
+#         INIT_JOINT_CONFIG = "random"  ,
 #         ENERGY_TERMINATE = True,
 #         REWARD_ID = 1
 #     ),
 #     test_id="min03", 
-#     n_eval_episodes = 1
+#     n_eval_episodes = 10
 # )
 
 # test(
@@ -99,11 +101,11 @@ test(
 #         ENVIRONMENT = "pendulum",
 #         ENERGY_TANK_INIT = min_etank_init*0.1,
 #         ENERGY_AWARE = False,
-#         INIT_JOINT_CONFIG =  [-np.pi/2],
+#         INIT_JOINT_CONFIG = "random" ,
 #         ENERGY_TERMINATE = True,
 #         REWARD_ID = 1
 #     ),
 #     test_id="min01", 
-#     n_eval_episodes = 1
+#     n_eval_episodes = 10
 # )
  

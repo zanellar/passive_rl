@@ -14,7 +14,10 @@ class TestRunEBud(TestRun):
         super().__init__(run_args, render=render)  
         test_id = "_"+test_id if test_id != "" else test_id
         new_testing_output_folder_path = self.testing_output_folder_path + test_id  
-        os.rename(src=self.testing_output_folder_path, dst=new_testing_output_folder_path)
+        try:
+            os.rename(src=self.testing_output_folder_path, dst=new_testing_output_folder_path)
+        except:
+            os.rmdir(self.testing_output_folder_path)
         self.testing_output_folder_path = new_testing_output_folder_path
     
     def eval_model(self, model_id="random", n_eval_episodes=30, cumulative_error=False, render=False): 
@@ -45,7 +48,8 @@ class TestRunEBud(TestRun):
                 episode_err = 0  
                 etankmin_list.append(min(energy_tank_list) if len(energy_tank_list)>0 else energy_tank)
                 energy_tank_list = [] 
-                episode_energy[str(i)] = energy_exchanged_list
+                episode_energy[str(i)] = energy_exchanged_list 
+                energy_exchanged_list = []
                 i +=1  
 
             else:       

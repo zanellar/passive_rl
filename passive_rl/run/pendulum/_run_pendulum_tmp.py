@@ -1,9 +1,11 @@
+from math import fabs
 import os
 import numpy as np
 from mjrlenvs.scripts.train.trainer import run   
 from passive_rl.scripts.pkgpaths import PkgPath 
 from passive_rl.scripts.tester import TestRunEBud  
-from passive_rl.run.halfcheetah.halfcheetah_configs import Args  
+from passive_rl.run.pendulum.pendulum_configs import Args 
+from passive_rl.envs.pendulum import PendulumEBud,PendulumEBudAw
 from passive_rl.scripts.statistics import confidence_interval
 
 
@@ -19,12 +21,12 @@ def test(x=None, test_id="", n_eval_episodes = 100):
     tester = TestRunEBud(Args, test_id=test_id)   
     data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True)
     err_min, err_max = confidence_interval(data=data["etankmin"], width=99) 
-    return err_min
+    return err_min 
 
 def train_and_test(x, test_id="", n_eval_episodes = 100): 
     Args.set(x) 
     run(Args) 
-    min_etankmin = test(x, test_id=test_id, n_eval_episodes=n_eval_episodes) 
+    min_etankmin = test(x, test_id=test_id,n_eval_episodes=n_eval_episodes) 
  
     with open(run_results_file_path, 'a') as file: 
         line = f"\n{Args.RUN_ID} {Args.ENVIRONMENT} {Args.ENV_EXPL.energy_tank_init} {min_etankmin}"   
@@ -34,41 +36,18 @@ def train_and_test(x, test_id="", n_eval_episodes = 100):
 
 
 ################################################################################################ 
-  
-min_etankmin = train_and_test(
-    dict(
-        RUN_ID = "etank_inf",
-        ENVIRONMENT = "halfcheetah",
-        ENERGY_TANK_INIT = 10000,
-        ENERGY_AWARE = False , 
-        ENERGY_TERMINATE = True, 
-    ),
-    test_id="inf", 
-    n_eval_episodes = 100
-)
+   
+min_etank_init = 1000 - 997.7762083274018
  
-
-min_etank_init = 10000 - min_etankmin
-  
-test(
-    x = dict(
-            RUN_ID = "etank_inf",
-            ENVIRONMENT = "halfcheetah",
-            ENERGY_TANK_INIT = min_etank_init,
-            ENERGY_AWARE = False,
-            ENERGY_TERMINATE = True,
-        ),
-    test_id="min", 
-    n_eval_episodes = 100
-)
-
 train_and_test(
     dict(
         RUN_ID = "etank_min",
-        ENVIRONMENT = "halfcheetah",
+        ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
+        INIT_JOINT_CONFIG =  "random" ,
         ENERGY_TERMINATE = True,
+        REWARD_ID = 1
     ),
     test_id="min", 
     n_eval_episodes = 100
@@ -78,11 +57,27 @@ train_and_test(
 
 # train_and_test(
 #     dict(
-#         RUN_ID = "etank_min06",
-#         ENVIRONMENT = "halfcheetah",
+#         RUN_ID = "etank_min08",
+#         ENVIRONMENT = "pendulum",
 #         ENERGY_TANK_INIT = min_etank_init*0.6,
 #         ENERGY_AWARE = False,
+#         INIT_JOINT_CONFIG =  "random",
 #         ENERGY_TERMINATE = True,
+#         REWARD_ID = 1
+#     ),
+#     test_id="min08", 
+#     n_eval_episodes = 10
+# )
+
+# train_and_test(
+#     dict(
+#         RUN_ID = "etank_min06",
+#         ENVIRONMENT = "pendulum",
+#         ENERGY_TANK_INIT = min_etank_init*0.3,
+#         ENERGY_AWARE = False,
+#         INIT_JOINT_CONFIG =  "random" ,
+#         ENERGY_TERMINATE = True,
+#         REWARD_ID = 1
 #     ),
 #     test_id="min06", 
 #     n_eval_episodes = 10
@@ -91,23 +86,13 @@ train_and_test(
 # train_and_test(
 #     dict(
 #         RUN_ID = "etank_min03",
-#         ENVIRONMENT = "halfcheetah",
-#         ENERGY_TANK_INIT = min_etank_init*0.3,
-#         ENERGY_AWARE = False,
-#         ENERGY_TERMINATE = True,
-#     ),
-#     test_id="min03", 
-#     n_eval_episodes = 10
-# )
-
-# train_and_test(
-#     dict(
-#         RUN_ID = "etank_min01",
-#         ENVIRONMENT = "halfcheetah",
+#         ENVIRONMENT = "pendulum",
 #         ENERGY_TANK_INIT = min_etank_init*0.1,
 #         ENERGY_AWARE = False,
+#         INIT_JOINT_CONFIG =  "random",
 #         ENERGY_TERMINATE = True,
+#         REWARD_ID = 1
 #     ),
-#     test_id="min01", 
+#     test_id="min03", 
 #     n_eval_episodes = 10
 # ) 

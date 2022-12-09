@@ -5,31 +5,7 @@ import gym
 from passive_rl.scripts.ebudenv import EBudBaseEnv,EBudAwEnv
  
 from mjrlenvs.scripts.env.envgymbase import EnvGymBase
-
-
-# class HalfCheetah(EnvGymBase): 
-
-#     def __init__(self):
-#         super(HalfCheetah, self).__init__()
-    
-#         self.env = gym.make('HalfCheetah-v3')  
-#         self.observation_space = self.env.observation_space # BUG 
-#         self.action_space = self.env.action_space # BUG 
-  
-#     def step(self, action):
-#         self.action = action  
-#         _obs, _reward, _done, _info = self.env.step(action) 
-#         return _obs, max(0, _reward), _done, _info
-    
-#     def reset(self ):  
-#         return self.env.reset() 
-
-#     def render(self ): 
-#         self.env.render()
-
-#     def get_joints(self):
-#         return np.array(self.env.sim.get_state()[1][-6:]) 
-
+ 
 
 class HalfCheetahEBud(EBudBaseEnv): 
 
@@ -45,8 +21,8 @@ class HalfCheetahEBud(EBudBaseEnv):
             energy_tank_threshold = energy_tank_threshold, # minimum energy in the tank  
             debug = debug,
             energy_terminate = energy_terminate,
-            non_neg_reward = True,
-            reward_offset = 5
+            non_neg_reward = False,
+            reward_offset = 0
         )
  
     def get_joints(self):  

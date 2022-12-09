@@ -34,34 +34,11 @@ def train_and_test(x, test_id="", n_eval_episodes = 100):
 
 
 ################################################################################################ 
-  
-min_etankmin = train_and_test(
-    dict(
-        RUN_ID = "etank_inf",
-        ENVIRONMENT = "halfcheetah",
-        ENERGY_TANK_INIT = 10000,
-        ENERGY_AWARE = False , 
-        ENERGY_TERMINATE = True, 
-    ),
-    test_id="inf", 
-    n_eval_episodes = 100
-)
- 
+   
+min_etankmin = input("min_etankmin = ")
 
 min_etank_init = 10000 - min_etankmin
-  
-test(
-    x = dict(
-            RUN_ID = "etank_inf",
-            ENVIRONMENT = "halfcheetah",
-            ENERGY_TANK_INIT = min_etank_init,
-            ENERGY_AWARE = False,
-            ENERGY_TERMINATE = True,
-        ),
-    test_id="min", 
-    n_eval_episodes = 100
-)
-
+    
 train_and_test(
     dict(
         RUN_ID = "etank_min",
