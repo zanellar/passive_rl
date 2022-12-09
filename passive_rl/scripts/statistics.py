@@ -38,7 +38,7 @@ def bootstrap(*args, **kwargs):
     n = len(args[0])
 
     # Default keyword arguments
-    n_boot = kwargs.get("n_boot", 1000)
+    n_boot = kwargs.get("n_boot", 10000)
     func = kwargs.get("func", "mean")
     axis = kwargs.get("axis", None)
     units = kwargs.get("units", None)
@@ -141,9 +141,10 @@ def _handle_random_seed(seed=None):
     return rng
 
 def confidence_interval(data, width, bootstrapping=True):
-    """Return a percentile interval from data of a given width."""
+    """Return a percentile interval from data of a given width.""" 
     if bootstrapping:
         data = bootstrap(data)
+        print(np.amin(data))
     edge = (100 - width) / 2
     percentiles = edge, 100 - edge
     return np.nanpercentile(data, percentiles)

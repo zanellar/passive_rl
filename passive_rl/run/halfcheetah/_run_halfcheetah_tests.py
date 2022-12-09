@@ -13,12 +13,12 @@ with open(run_results_file_path, 'w') as file:
     line = ""   
     file.write(line) 
 
-def test(x=None, test_id="", n_eval_episodes = 100):    
+def test(x=None, test_id="", n_eval_episodes = 10):    
     if x is not None:
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)   
     data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True)
-    err_min, err_max = confidence_interval(data=data["etankmin"], width=99) 
+    err_min, err_max = confidence_interval(data=data["etankmin"], width=100) 
     return err_min
  
 
@@ -34,7 +34,7 @@ min_etankmin = test(
             ENERGY_TERMINATE = True,
         ),
     test_id="inf", 
-    n_eval_episodes = 100
+    n_eval_episodes = 10
 )
 
 min_etank_init = 10000 - min_etankmin
@@ -50,7 +50,7 @@ test(
             ENERGY_TERMINATE = True,
         ),
     test_id="min", 
-    n_eval_episodes = 100
+    n_eval_episodes = 10
 )
 
 test(
@@ -62,6 +62,6 @@ test(
         ENERGY_TERMINATE = True,
     ),
     test_id="min", 
-    n_eval_episodes = 100
+    n_eval_episodes = 10
 )
  

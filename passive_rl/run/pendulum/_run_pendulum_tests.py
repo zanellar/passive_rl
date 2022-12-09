@@ -9,12 +9,12 @@ from passive_rl.envs.pendulum import PendulumEBud,PendulumEBudAw
 from passive_rl.scripts.statistics import confidence_interval
 
  
-def test(x=None, test_id="", n_eval_episodes = 100):    
+def test(x=None, test_id="", n_eval_episodes = 10):    
     if x is not None:
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
-    data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True, render=False, cumulative_error=False)
-    err_min, err_max = confidence_interval(data=data["etankmin"], width=99) 
+    data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=False, render=False, cumulative_error=False)
+    err_min, err_max = confidence_interval(data=data["etankmin"], width=100) 
     return err_min
 
 ###########################################################################
@@ -22,7 +22,7 @@ def test(x=None, test_id="", n_eval_episodes = 100):
 min_etankmin = 997.7762083274018 #input("min_etankmin = ")
 min_etank_init = 1000 - min_etankmin
  
-test(
+err_min = test(
     x = dict(
             RUN_ID = "etank_inf",
             ENVIRONMENT = "pendulum",
@@ -33,9 +33,10 @@ test(
             REWARD_ID = 1
         ),
     test_id="inf", 
-    n_eval_episodes = 100
+    n_eval_episodes = 10
 )
-
+print(err_min)
+exit()
 test(
     dict(
         RUN_ID = "etank_inf",
@@ -47,7 +48,7 @@ test(
         REWARD_ID = 1
     ),
     test_id="min", 
-    n_eval_episodes = 100
+    n_eval_episodes = 10
 )
 
 
@@ -62,7 +63,7 @@ test(
         REWARD_ID = 1
     ),
     test_id="min", 
-    n_eval_episodes = 100
+    n_eval_episodes = 10
 )
 
 # ##################################################################################

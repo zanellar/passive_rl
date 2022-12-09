@@ -13,15 +13,15 @@ with open(run_results_file_path, 'w') as file:
     line = ""   
     file.write(line) 
 
-def test(x=None, test_id="", n_eval_episodes = 100):    
+def test(x=None, test_id="", n_eval_episodes = 10):    
     if x is not None:
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)   
     data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True)
-    err_min, err_max = confidence_interval(data=data["etankmin"], width=99) 
+    err_min, err_max = confidence_interval(data=data["etankmin"], width=100) 
     return err_min
 
-def train_and_test(x, test_id="", n_eval_episodes = 100): 
+def train_and_test(x, test_id="", n_eval_episodes = 10): 
     Args.set(x) 
     run(Args) 
     min_etankmin = test(x, test_id=test_id, n_eval_episodes=n_eval_episodes) 
@@ -48,7 +48,7 @@ train_and_test(
         ENERGY_TERMINATE = True,
     ),
     test_id="min", 
-    n_eval_episodes = 100
+    n_eval_episodes = 10
 )
 
 # #############################################
