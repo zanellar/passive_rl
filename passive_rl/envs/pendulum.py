@@ -11,6 +11,7 @@ class PendulumEBud(EBudBaseEnv):
                 energy_tank_init = 10, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank   
                 init_joint_config = "random",
+                init_joint_config_std_noise = 0,
                 debug = False,
                 energy_terminate = False,
                 folder_path = None,
@@ -24,6 +25,7 @@ class PendulumEBud(EBudBaseEnv):
                 folder_path = folder_path,
                 max_episode_length = max_episode_length, 
                 init_joint_config = init_joint_config,
+                init_joint_config_std_noise = init_joint_config_std_noise,
                 hard_reset = hard_reset,
                 reward_id=reward_id
             ),
@@ -51,6 +53,7 @@ class PendulumEBudAw(EBudAwEnv):
                 energy_tank_init = 10, # initial energy in the tank
                 energy_tank_threshold = 0, # minimum energy in the tank   
                 init_joint_config = "random",
+                init_joint_config_std_noise = 0,
                 debug = False,
                 energy_terminate = False,
                 folder_path = None,
@@ -64,6 +67,7 @@ class PendulumEBudAw(EBudAwEnv):
                 folder_path = folder_path,
                 max_episode_length = max_episode_length, 
                 init_joint_config = init_joint_config,
+                init_joint_config_std_noise = init_joint_config_std_noise,
                 hard_reset = hard_reset,
                 reward_id=reward_id
             ),

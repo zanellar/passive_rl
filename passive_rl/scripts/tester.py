@@ -85,21 +85,21 @@ class TestRunEBud(TestRun):
 
             if save:  
 
-                file_path =  os.path.join(self.testing_output_folder_path, "returns_eval_model.json") 
+                file_path =  os.path.join(self.testing_output_folder_path, "returns_eval.json") 
                 with open(file_path, 'w') as f:
-                    json.dump(dict(model_id = returns_list), f) 
+                    json.dump({model_id:returns_list}, f) 
 
-                file_path =  os.path.join(self.testing_output_folder_path, "etank_eval_model.json") 
+                file_path =  os.path.join(self.testing_output_folder_path, "etank_eval.json") 
                 with open(file_path, 'w') as f:
-                    json.dump(dict(model_id = etankmin_list), f) 
+                    json.dump({model_id:etankmin_list}, f) 
 
-                file_path =  os.path.join(self.testing_output_folder_path, "energy_eval_model.json") 
+                file_path =  os.path.join(self.testing_output_folder_path, "energy_eval.json") 
                 with open(file_path, 'w') as f:
-                    json.dump(dict(model_id = episode_energy), f) 
+                    json.dump({model_id:episode_energy}, f)  
 
-                file_path =  os.path.join(self.testing_output_folder_path, "errors_eval_model.json") 
+                file_path =  os.path.join(self.testing_output_folder_path, "errors_eval.json") 
                 with open(file_path, 'w') as f:
-                    json.dump(dict(model_id = err_list) , f) 
+                    json.dump({model_id:err_list}, f)  
     
         return dict(etankmin=etankmin_list, err=err_list, ret=returns_list, episode_energy = episode_energy)
 
@@ -136,19 +136,19 @@ class TestRunEBud(TestRun):
                 data_err[model_id] = model_eval_data["err"]
  
         if save:  
-            file_path =  os.path.join(self.testing_output_folder_path, "returns_eval_run.json") 
+            file_path =  os.path.join(self.testing_output_folder_path, "returns_eval.json") 
             with open(file_path, 'w') as f:
                 json.dump(data_ret, f) 
 
-            file_path =  os.path.join(self.testing_output_folder_path, "etank_eval_run.json") 
+            file_path =  os.path.join(self.testing_output_folder_path, "etank_eval.json") 
             with open(file_path, 'w') as f:
                 json.dump(data_etankmin, f) 
 
-            file_path =  os.path.join(self.testing_output_folder_path, "energy_eval_run.json") 
+            file_path =  os.path.join(self.testing_output_folder_path, "energy_eval.json") 
             with open(file_path, 'w') as f:
                 json.dump(data_energy, f) 
 
-            file_path =  os.path.join(self.testing_output_folder_path, "errors_eval_run.json") 
+            file_path =  os.path.join(self.testing_output_folder_path, "errors_eval.json") 
             with open(file_path, 'w') as f:
                 json.dump(data_err, f) 
          

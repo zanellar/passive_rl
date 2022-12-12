@@ -31,7 +31,7 @@ x_inf = dict(
             ENVIRONMENT = "pendulum",
             ENERGY_TANK_INIT = 1000,
             ENERGY_AWARE = False,
-            INIT_JOINT_CONFIG =  "random",
+            INIT_JOINT_CONFIG =  [-np.pi/2],
             ENERGY_TERMINATE = True,
             REWARD_ID = 1
         )
@@ -66,7 +66,7 @@ x_min = dict(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG =  "random" ,
+        INIT_JOINT_CONFIG =  [-np.pi/2],
         ENERGY_TERMINATE = True,
         REWARD_ID = 1
     ) 

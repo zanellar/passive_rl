@@ -1,3 +1,4 @@
+import math
 import numpy as np  
 from mjrlenvs.scripts.train.trainer import run 
 from mjrlenvs.scripts.train.trainutils import linear_schedule 
@@ -54,6 +55,7 @@ class Args(DefaultArgs):
         Args.ENERGY_TANK_INIT = args["ENERGY_TANK_INIT"] 
         Args.ENVIRONMENT = args["ENVIRONMENT"]  if "ENVIRONMENT" in args.keys() else "pendulum" 
         Args.INIT_JOINT_CONFIG = args["INIT_JOINT_CONFIG"] if "INIT_JOINT_CONFIG" in args.keys() else "random"
+        Args.INIT_JOINT_CONFIG_STD_NOISE = args["INIT_JOINT_CONFIG_STD_NOISE"] if "INIT_JOINT_CONFIG_STD_NOISE" in args.keys() else 0.1*math.pi/2 
         Args.ENERGY_TERMINATE  = args["ENERGY_TERMINATE"]  if "ENERGY_TERMINATE" in args.keys() else False
         Args.REWARD_ID = args["REWARD_ID"]  if "REWARD_ID" in args.keys() else 0
 
@@ -64,6 +66,7 @@ class Args(DefaultArgs):
                             energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                             energy_tank_threshold = 0, # minimum energy in the tank  
                             init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
+                        init_joint_config_std_noise = Args.INIT_JOINT_CONFIG_STD_NOISE,  
                             folder_path = PkgPath.ENV_DESC_FOLDER,
                             env_name = Args.ENVIRONMENT, 
                             reward_id = Args.REWARD_ID  
@@ -73,6 +76,7 @@ class Args(DefaultArgs):
                             energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                             energy_tank_threshold = 0, # minimum energy in the tank  
                             init_joint_config = Args.INIT_JOINT_CONFIG,# [-1.57] or "random"
+                        init_joint_config_std_noise = Args.INIT_JOINT_CONFIG_STD_NOISE,  
                             folder_path = PkgPath.ENV_DESC_FOLDER,
                             env_name = Args.ENVIRONMENT, 
                             reward_id = Args.REWARD_ID  
@@ -84,6 +88,7 @@ class Args(DefaultArgs):
                         energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                         energy_tank_threshold = 0, # minimum energy in the tank  
                         init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
+                        init_joint_config_std_noise = Args.INIT_JOINT_CONFIG_STD_NOISE,  
                         folder_path = PkgPath.ENV_DESC_FOLDER,
                         env_name = Args.ENVIRONMENT,
                         energy_terminate = Args.ENERGY_TERMINATE, 
@@ -95,6 +100,7 @@ class Args(DefaultArgs):
                         energy_tank_init = Args.ENERGY_TANK_INIT, # initial energy in the tank
                         energy_tank_threshold = 0, # minimum energy in the tank  
                         init_joint_config = Args.INIT_JOINT_CONFIG, # [-1.57] or "random"
+                        init_joint_config_std_noise = Args.INIT_JOINT_CONFIG_STD_NOISE,  
                         folder_path = PkgPath.ENV_DESC_FOLDER,
                         env_name = Args.ENVIRONMENT,
                         hard_reset = False,

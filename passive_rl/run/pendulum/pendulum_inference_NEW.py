@@ -18,7 +18,7 @@ def test(model_id, x=None, test_id="", n_eval_episodes = 10):
 
 ###########################################################################
 
-model_id = "SAC_1_0"
+model_id = "SAC_4_0"
 min_etankmin = 985.1162415689222 
 min_etank_init = 1000 - min_etankmin
 

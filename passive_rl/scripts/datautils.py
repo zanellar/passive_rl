@@ -124,7 +124,7 @@ def df_multiruns_episodes_energy( run_paths_list, smooth=False, interpolate=Fals
 def df_test_run_etank(run_folder_path, etank_init=None ): 
     ''' DataFrame with the energy corresponding to each episode of all the tests in the given run'''
     print(f"Loading logs from: {run_folder_path}")
-    saved_etank_test_path = os.path.join(run_folder_path, "etank_eval_run.json")  
+    saved_etank_test_path = os.path.join(run_folder_path, "etank_eval.json")  
     data = dataload(saved_etank_test_path)
     etank_values = []
     tank_levels = []
@@ -160,7 +160,7 @@ def df_test_multirun_etank(run_paths_list, etank_init_list=[], run_label_list=[]
 def df_test_run_energy(run_folder_path, smooth=False ): 
     ''' DataFrame with the energy corresponding to each episode of all the tests in the given run'''
     print(f"Loading logs from: {run_folder_path}")
-    saved_energy_test_path = os.path.join(run_folder_path, "energy_eval_run.json")  
+    saved_energy_test_path = os.path.join(run_folder_path, "energy_eval.json")  
     data = dataload(saved_energy_test_path)
     run_df = pd.DataFrame()
     for model_id in data.keys():   
@@ -245,7 +245,7 @@ def df_multiruns_episodes_error( run_paths_list, smooth=False, interpolate=False
 def df_test_run_errors(run_folder_path, smooth=False, interpolate=False): 
     ''' DataFrame with the errors corresponding to each episode of all the tests in the given run''' 
     print(f"Loading logs from: {run_folder_path}")
-    saved_errors_test_path = os.path.join(run_folder_path, "errors_eval_run.json")  
+    saved_errors_test_path = os.path.join(run_folder_path, "errors_eval.json")  
     data = dataload(saved_errors_test_path)
     errors_values = [] 
     for v in data.values(): 
