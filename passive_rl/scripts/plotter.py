@@ -159,31 +159,61 @@ class PlotterEBud(Plotter):
 
     ##############################################################################################################################################################
  
-    def multirun_energyexiting_test(self, env_run_ids, labels=[], xlabels=None, ylabels=None , xsteps=False, smooth=False,  save=True, show=True, plot_name=None, sub_folder_name="", plot_type="histplot", ext="pdf", xlim=[None,None], ylim=[None,None]): 
+    def multirun_energyexiting_test(self, env_run_ids, labels=[], xlabels=None, ylabels=None , xsteps=False, smooth=False,  save=True, show=True, plot_name=None, sub_folder_name="", plot_type="histplot", ext="pdf", xlim=[None,None], ylim=[None,None], bootstrap=True): 
         if plot_name == None:
             plot_name = str(len(env_run_ids))
         run_paths_list = [os.path.join(self.out_test_folder, env_run) for env_run in env_run_ids]
         
-        data = df_test_multirun_energy(run_paths_list=run_paths_list, smooth=smooth, run_label_list=labels, ) 
+        data = df_test_multirun_energy(run_paths_list=run_paths_list, smooth=smooth, run_label_list=labels ) 
         save_path = os.path.join(self.save_multirun_testing_plots_path, sub_folder_name, f"{plot_name}_{plot_type}_multirun_energyexiting_test.{ext}")
 
-        self._line_plot(
-            data = data,
-            x =  "Steps", 
-            y = "TotalEnergy",  
-            hue = "Runs", 
-            xsteps = xsteps,
-            run_paths_list = run_paths_list,
-            labels = labels,
-            xlabels = xlabels,
-            ylabels = ylabels,
-            xlim = xlim,
-            ylim = ylim,
-            show = show,
-            save = save,
-            save_path = save_path,
-            ext = ext
-        )   
+        if bootstrap: 
+            self._line_plot(
+                data = data,
+                x =  "Steps", 
+                y = "TotalEnergy",  
+                hue = "Runs", 
+                xsteps = xsteps,
+                run_paths_list = run_paths_list,
+                labels = labels,
+                xlabels = xlabels,
+                ylabels = ylabels,
+                xlim = xlim,
+                ylim = ylim,
+                show = show,
+                save = save,
+                save_path = save_path,
+                ext = ext
+            )   
+        else: 
+            maxvals = {}
+            minvals = {}
+            avgvals = {}
+            for run in data["Runs"].unique():
+                datarun = data[data["Runs"]==run]
+                df = pd.DataFrame( )  
+                for i,test in enumerate(datarun["Tests"].unique()): 
+                    df.insert(loc=len(df.columns), column=str(i), value=datarun[datarun["Tests"]==test]["TotalEnergy"].reset_index(drop=True))    
+                maxvals[run] = df.max(axis=1)
+                minvals[run] = df.min(axis=1)
+                avgvals[run] = df.mean(axis=1)
+                
+            # print(df.iloc[498])
+            self._line_plot_nobs(
+                maxvals = maxvals,
+                minvals = minvals,
+                avgvals = avgvals, 
+                labels = labels,
+                xlabels = xlabels,
+                ylabels = ylabels,
+                xlim = xlim,
+                ylim = ylim,
+                show = show,
+                save = save,
+                save_path = save_path,
+                ext = ext
+            )
+            
  
     ##############################################################################################################################################################
  

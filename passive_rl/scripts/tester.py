@@ -1,7 +1,8 @@
  
 import os  
 import json
-from traceback import print_tb 
+from traceback import print_tb
+from imageio import save 
 from stable_baselines3.common.callbacks import CallbackList, BaseCallback 
 from mjrlenvs.scripts.eval.tester import TestRun 
 from passive_rl.scripts.pkgpaths import PkgPath  
@@ -20,7 +21,7 @@ class TestRunEBud(TestRun):
             os.rmdir(self.testing_output_folder_path)
         self.testing_output_folder_path = new_testing_output_folder_path
     
-    def eval_model(self, model_id="random", n_eval_episodes=30, cumulative_error=False, render=False): 
+    def eval_model(self, model_id="random", n_eval_episodes=30, cumulative_error=False, render=False, save=False): 
         self._loadmodel(model_id) 
         obs = self.env.reset() 
         energy_tank_list = []
@@ -32,15 +33,17 @@ class TestRunEBud(TestRun):
         returns_list = []
         episode_return = 0
         i = 0 
+        
         while i<n_eval_episodes: 
             action, _ = self.model.predict(obs, deterministic=True)
             obs, reward, done, info = self.env.step(action) 
 
             energy_tank = info[0]["energy_tank"]    
             energy_exchanged = info[0]["energy_exchanged"]   
+              
  
             if done:
-
+                
                 obs = self.env.reset()
                 returns_list.append(episode_return) 
                 episode_return = 0 
@@ -50,7 +53,7 @@ class TestRunEBud(TestRun):
                 energy_tank_list = [] 
                 episode_energy[str(i)] = energy_exchanged_list 
                 energy_exchanged_list = []
-                i +=1  
+                i +=1   
 
             else:       
 
@@ -79,8 +82,25 @@ class TestRunEBud(TestRun):
 
             if render:
                 self.env.render() # BUG not working cam selection
-   
 
+            if save:  
+
+                file_path =  os.path.join(self.testing_output_folder_path, "returns_eval_model.json") 
+                with open(file_path, 'w') as f:
+                    json.dump(dict(model_id = returns_list), f) 
+
+                file_path =  os.path.join(self.testing_output_folder_path, "etank_eval_model.json") 
+                with open(file_path, 'w') as f:
+                    json.dump(dict(model_id = etankmin_list), f) 
+
+                file_path =  os.path.join(self.testing_output_folder_path, "energy_eval_model.json") 
+                with open(file_path, 'w') as f:
+                    json.dump(dict(model_id = episode_energy), f) 
+
+                file_path =  os.path.join(self.testing_output_folder_path, "errors_eval_model.json") 
+                with open(file_path, 'w') as f:
+                    json.dump(dict(model_id = err_list) , f) 
+    
         return dict(etankmin=etankmin_list, err=err_list, ret=returns_list, episode_energy = episode_energy)
 
     def eval_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname="", cumulative_error=False):  
@@ -112,11 +132,9 @@ class TestRunEBud(TestRun):
                 data_ret[model_id] = model_eval_data["ret"]  
                 data_etankmin[model_id] = model_eval_data["etankmin"] 
                 data_energy[model_id] = model_eval_data["episode_energy"]
+
                 data_err[model_id] = model_eval_data["err"]
-
-        if plot:
-            pass #TODO   
-
+ 
         if save:  
             file_path =  os.path.join(self.testing_output_folder_path, "returns_eval_run.json") 
             with open(file_path, 'w') as f:

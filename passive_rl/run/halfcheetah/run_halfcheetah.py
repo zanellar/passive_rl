@@ -46,8 +46,7 @@ min_etankmin = train_and_test(
     test_id="inf", 
     n_eval_episodes = 10
 )
- 
-
+  
 min_etank_init = 10000 - min_etankmin
   
 test(

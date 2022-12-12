@@ -5,7 +5,6 @@ from mjrlenvs.scripts.train.trainer import run
 from passive_rl.scripts.pkgpaths import PkgPath 
 from passive_rl.scripts.tester import TestRunEBud  
 from passive_rl.run.pendulum.pendulum_configs import Args 
-from passive_rl.envs.pendulum import PendulumEBud,
 from passive_rl.scripts.statistics import confidence_interval
 
  
@@ -28,7 +27,7 @@ test(
             ENVIRONMENT = "pendulum_wind",
             ENERGY_TANK_INIT = 1000,
             ENERGY_AWARE = False,
-            INIT_JOINT_CONFIG = "random",
+            INIT_JOINT_CONFIG = [-np.pi/2],
             ENERGY_TERMINATE = False,
             REWARD_ID = 1
         ),
@@ -36,32 +35,32 @@ test(
     n_eval_episodes = 10
 )
 
-test(
-    dict(
-        RUN_ID = "etank_inf",
-        ENVIRONMENT = "pendulum_wind",
-        ENERGY_TANK_INIT = min_etank_init,
-        ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG = "random",
-        ENERGY_TERMINATE = False,
-        REWARD_ID = 1
-    ),
-    test_id="min", 
-    n_eval_episodes = 10
-)
+# test(
+#     dict(
+#         RUN_ID = "etank_inf",
+#         ENVIRONMENT = "pendulum_wind",
+#         ENERGY_TANK_INIT = min_etank_init,
+#         ENERGY_AWARE = False,
+#         INIT_JOINT_CONFIG = "random",
+#         ENERGY_TERMINATE = False,
+#         REWARD_ID = 1
+#     ),
+#     test_id="min", 
+#     n_eval_episodes = 10
+# )
 
 
-test(
-    dict(
-        RUN_ID = "etank_min",
-        ENVIRONMENT = "pendulum_wind",
-        ENERGY_TANK_INIT = min_etank_init,
-        ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG = "random",
-        ENERGY_TERMINATE = False,
-        REWARD_ID = 1
-    ),
-    test_id="min", 
-    n_eval_episodes = 10
-)
+# test(
+#     dict(
+#         RUN_ID = "etank_min",
+#         ENVIRONMENT = "pendulum_wind",
+#         ENERGY_TANK_INIT = min_etank_init,
+#         ENERGY_AWARE = False,
+#         INIT_JOINT_CONFIG = "random",
+#         ENERGY_TERMINATE = False,
+#         REWARD_ID = 1
+#     ),
+#     test_id="min", 
+#     n_eval_episodes = 10
+# )
  

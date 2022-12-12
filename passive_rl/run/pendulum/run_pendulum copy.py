@@ -49,21 +49,7 @@ min_etankmin = train_and_test(
     ),
     test_id="inf", 
     n_eval_episodes = 10
-)
-
-test(
-    x = dict(
-            RUN_ID = "etank_inf",
-            ENVIRONMENT = "pendulum",
-            ENERGY_TANK_INIT = 1000,
-            ENERGY_AWARE = False,
-            INIT_JOINT_CONFIG =  "random",
-            ENERGY_TERMINATE = True,
-            REWARD_ID = 1
-        ),
-    test_id="inf", 
-    n_eval_episodes = 10
-)
+) 
 
 min_etank_init = 1000 - min_etankmin
 

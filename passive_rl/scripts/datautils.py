@@ -267,4 +267,4 @@ def df_test_multirun_errors(run_paths_list, smooth=False, interpolate=False, run
         comb_df = pd.concat([comb_df, df], ignore_index=True)
     return comb_df 
 
-  
+   
