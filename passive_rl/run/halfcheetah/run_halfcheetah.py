@@ -8,7 +8,7 @@ from passive_rl.scripts.statistics import confidence_interval
 
 
 
-run_results_file_path = os.path.join(PkgPath.OUT_TRAIN_FOLDER,"run_results.txt")  
+run_results_file_path = os.path.join(PkgPath.OUT_TRAIN_FOLDER,"pendulum", "run_results.txt")  
 with open(run_results_file_path, 'w') as file: 
     line = ""   
     file.write(line) 

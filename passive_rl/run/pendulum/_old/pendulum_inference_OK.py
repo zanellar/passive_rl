@@ -13,9 +13,7 @@ def test(x=None, test_id="", n_eval_episodes = 10):
     if x is not None:
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
-    data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True, render=False, cumulative_error=False)
-    # err_min, err_max = confidence_interval(data=data["etankmin"], width=100) 
-    # return err_min
+    data = tester.eval_run(n_eval_episodes=n_eval_episodes, save=True, render=False, cumulative_error=False) 
     return np.amin(data["etankmin"])
 
 ###########################################################################
@@ -28,7 +26,7 @@ min_etankmin = test(
             ENVIRONMENT = "pendulum",
             ENERGY_TANK_INIT = 1000,
             ENERGY_AWARE = False,
-            INIT_JOINT_CONFIG = [-np.pi/2],
+            INIT_JOINT_CONFIG = "random",
             ENERGY_TERMINATE = False,
             REWARD_ID = 1
         ),
@@ -45,7 +43,7 @@ test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG = [-np.pi/2],
+        INIT_JOINT_CONFIG = "random",
         ENERGY_TERMINATE = False,
         REWARD_ID = 1
     ),
@@ -60,7 +58,7 @@ test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG = [-np.pi/2],
+        INIT_JOINT_CONFIG = "random",
         ENERGY_TERMINATE = False,
         REWARD_ID = 1
     ),
@@ -74,7 +72,7 @@ test(
         ENVIRONMENT = "pendulum",
         ENERGY_TANK_INIT = 1000,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG = [-np.pi/2],
+        INIT_JOINT_CONFIG = "random",
         ENERGY_TERMINATE = False,
         REWARD_ID = 1
     ),
@@ -90,7 +88,7 @@ test(
             ENVIRONMENT = "pendulum_wind",
             ENERGY_TANK_INIT = 1000,
             ENERGY_AWARE = False,
-            INIT_JOINT_CONFIG = [-np.pi/2],
+            INIT_JOINT_CONFIG = "random",
             ENERGY_TERMINATE = False,
             REWARD_ID = 1
         ),
@@ -104,7 +102,7 @@ test(
         ENVIRONMENT = "pendulum_wind",
         ENERGY_TANK_INIT = min_etank_init,
         ENERGY_AWARE = False,
-        INIT_JOINT_CONFIG = [-np.pi/2],
+        INIT_JOINT_CONFIG = "random",
         ENERGY_TERMINATE = False,
         REWARD_ID = 1
     ),

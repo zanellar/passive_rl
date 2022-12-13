@@ -157,6 +157,8 @@ def df_test_multirun_etank(run_paths_list, etank_init_list=[], run_label_list=[]
         comb_df = pd.concat([comb_df, df], ignore_index=True)
     return comb_df 
 
+###########################################################################
+
 def df_test_run_energy(run_folder_path, smooth=False ): 
     ''' DataFrame with the energy corresponding to each episode of all the tests in the given run'''
     print(f"Loading logs from: {run_folder_path}")
@@ -181,6 +183,41 @@ def df_test_multirun_energy( run_paths_list, smooth=False,   run_label_list=[] )
     comb_df = pd.DataFrame()   
     for i, run_folder_path in enumerate(run_paths_list):  
         df = df_test_run_energy(run_folder_path=run_folder_path, smooth=smooth ) 
+        if len(run_label_list) > 0:
+            run_label = run_label_list[i]
+        else:
+            env_id, run_id  = run_folder_path.split("/")[-2:]  
+            run_label = env_id+"_"+run_id 
+        df["Runs"] = [run_label]*len(df["Tests"])
+        comb_df = pd.concat([comb_df, df], ignore_index=True)
+    return comb_df 
+
+
+###########################################################################
+
+def df_test_run_poserror(run_folder_path, smooth=False ): 
+    ''' DataFrame with the poserror corresponding to each episode of all the tests in the given run'''
+    print(f"Loading logs from: {run_folder_path}")
+    saved_poserror_test_path = os.path.join(run_folder_path, "errors_eval.json")  
+    data = dataload(saved_poserror_test_path)
+    run_df = pd.DataFrame()
+    for model_id in data.keys():   
+        for episode in data[model_id].keys():
+            episode_poserror = data[model_id][episode] 
+            num_steps = len(episode_poserror) 
+            timeframe = np.arange(num_steps)  
+            if smooth:
+                episode_poserror = _smooth(episode_poserror) 
+            print(f"model:{model_id} - ep:{episode}")
+            df = pd.DataFrame(dict(Steps = timeframe, PosError = episode_poserror, Tests=f"{model_id}_ep{episode}" ))    
+            run_df = pd.concat([run_df, df], ignore_index=True)
+    return run_df  
+
+def df_test_multirun_poserror( run_paths_list, smooth=False,   run_label_list=[] ):  
+    ''' DataFrame with the poserror corresponding to each episode of all the trainings in the given list of runs'''
+    comb_df = pd.DataFrame()   
+    for i, run_folder_path in enumerate(run_paths_list):  
+        df = df_test_run_poserror(run_folder_path=run_folder_path, smooth=smooth ) 
         if len(run_label_list) > 0:
             run_label = run_label_list[i]
         else:

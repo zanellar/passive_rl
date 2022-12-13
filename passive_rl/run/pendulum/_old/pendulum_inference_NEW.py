@@ -13,7 +13,7 @@ def test(model_id, x=None, test_id="", n_eval_episodes = 10):
     if x is not None:
         Args.set(x)  
     tester = TestRunEBud(Args, test_id=test_id)  
-    data = tester.eval_model(model_id=model_id,n_eval_episodes=n_eval_episodes, save=True, render=False, cumulative_error=False) 
+    data = tester.eval_model(model_id=model_id,n_eval_episodes=n_eval_episodes, save=True, render=True, cumulative_error=False) 
     return np.amin(data["etankmin"])
 
 ###########################################################################
@@ -22,7 +22,7 @@ model_id = "SAC_4_0"
 min_etankmin = 985.1162415689222 
 min_etank_init = 1000 - min_etankmin
 
-test(
+min_etankmin = test(
     model_id = model_id,
     x = dict(
             RUN_ID = "etank_inf",
@@ -37,6 +37,8 @@ test(
     n_eval_episodes = 10
 ) 
 
+print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+input(f"min_etankmin={min_etankmin}...[enter]")
   
 test(
     model_id = model_id,

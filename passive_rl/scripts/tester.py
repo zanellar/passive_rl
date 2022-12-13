@@ -26,10 +26,12 @@ class TestRunEBud(TestRun):
         obs = self.env.reset() 
         energy_tank_list = []
         episode_energy = {}
+        episode_errors = {}
         energy_exchanged_list = []
+        pos_errors_list = []
         etankmin_list = []
-        episode_err = 0
-        err_list = []
+        final_episode_err = 0
+        fin_err_list = []
         returns_list = []
         episode_return = 0
         i = 0 
@@ -45,14 +47,22 @@ class TestRunEBud(TestRun):
             if done:
                 
                 obs = self.env.reset()
+
                 returns_list.append(episode_return) 
                 episode_return = 0 
-                err_list.append(episode_err)
-                episode_err = 0  
+
+                fin_err_list.append(final_episode_err)
+                final_episode_err = 0  
+
+                episode_errors[str(i)] = pos_errors_list 
+                pos_errors_list = []
+
                 etankmin_list.append(min(energy_tank_list) if len(energy_tank_list)>0 else energy_tank)
                 energy_tank_list = [] 
+
                 episode_energy[str(i)] = energy_exchanged_list 
                 energy_exchanged_list = []
+
                 i +=1   
 
             else:       
@@ -70,15 +80,18 @@ class TestRunEBud(TestRun):
                 position_error = abs(1. - sin_pos) 
 
                 if cumulative_error:
-                    episode_err += position_error
+                    final_episode_err += position_error
                 else:
-                    episode_err = position_error
+                    final_episode_err = position_error
 
                 # minimal energy in tank 
                 energy_tank_list.append(energy_tank)
 
                 # energy exchanged during the episode
                 energy_exchanged_list.append(energy_exchanged)
+
+                # position error during the episode
+                pos_errors_list.append(position_error)
 
             if render:
                 self.env.render() # BUG not working cam selection
@@ -93,28 +106,33 @@ class TestRunEBud(TestRun):
                 with open(file_path, 'w') as f:
                     json.dump({model_id:etankmin_list}, f) 
 
+                file_path =  os.path.join(self.testing_output_folder_path, "finalerrors_eval.json") 
+                with open(file_path, 'w') as f:
+                    json.dump({model_id:fin_err_list}, f)  
+    
+                file_path =  os.path.join(self.testing_output_folder_path, "errors_eval.json") 
+                with open(file_path, 'w') as f:
+                    json.dump({model_id:episode_errors}, f)  
+
                 file_path =  os.path.join(self.testing_output_folder_path, "energy_eval.json") 
                 with open(file_path, 'w') as f:
                     json.dump({model_id:episode_energy}, f)  
 
-                file_path =  os.path.join(self.testing_output_folder_path, "errors_eval.json") 
-                with open(file_path, 'w') as f:
-                    json.dump({model_id:err_list}, f)  
-    
-        return dict(etankmin=etankmin_list, err=err_list, ret=returns_list, episode_energy = episode_energy)
+        return dict(etankmin=etankmin_list, final_errors=fin_err_list, ret=returns_list, episode_energy = episode_energy, episode_errors = episode_errors)
 
     def eval_run(self, n_eval_episodes=30, render=False, save=False, plot=False, addname="", cumulative_error=False):  
 
         data_etankmin = {}
         data_energy = {}
-        data_err = {}
-        data_ret = {}
+        data_finalerrors = {}
+        data_poserr = {}
+        data_return = {}
 
         run_training_logs_folder_path = os.path.join(self.training_output_folder_path,"logs")
 
         run_eval_etankmindata = []
-        run_eval_errdata = []
-        run_eval_retdata = []
+        run_eval_finalerrorsdata = []
+        run_eval_returndata = []
 
         for file_name in os.listdir(run_training_logs_folder_path):  
 
@@ -125,20 +143,20 @@ class TestRunEBud(TestRun):
                 print(f"Evaluating {model_id}")
                 model_eval_data = self.eval_model(model_id=model_id, n_eval_episodes=n_eval_episodes, render=render, cumulative_error=cumulative_error ) 
                 
-                run_eval_retdata += model_eval_data["ret"]  
+                run_eval_returndata += model_eval_data["ret"]  
                 run_eval_etankmindata += model_eval_data["etankmin"] 
-                run_eval_errdata += model_eval_data["err"]
+                run_eval_finalerrorsdata += model_eval_data["final_errors"]
 
-                data_ret[model_id] = model_eval_data["ret"]  
+                data_return[model_id] = model_eval_data["ret"]  
                 data_etankmin[model_id] = model_eval_data["etankmin"] 
                 data_energy[model_id] = model_eval_data["episode_energy"]
-
-                data_err[model_id] = model_eval_data["err"]
+                data_poserr[model_id] = model_eval_data["episode_errors"] 
+                data_finalerrors[model_id] = model_eval_data["final_errors"]
  
         if save:  
             file_path =  os.path.join(self.testing_output_folder_path, "returns_eval.json") 
             with open(file_path, 'w') as f:
-                json.dump(data_ret, f) 
+                json.dump(data_return, f) 
 
             file_path =  os.path.join(self.testing_output_folder_path, "etank_eval.json") 
             with open(file_path, 'w') as f:
@@ -148,9 +166,13 @@ class TestRunEBud(TestRun):
             with open(file_path, 'w') as f:
                 json.dump(data_energy, f) 
 
+            file_path =  os.path.join(self.testing_output_folder_path, "finalerrors_eval.json") 
+            with open(file_path, 'w') as f:
+                json.dump(data_finalerrors, f) 
+
             file_path =  os.path.join(self.testing_output_folder_path, "errors_eval.json") 
             with open(file_path, 'w') as f:
-                json.dump(data_err, f) 
+                json.dump(data_poserr, f) 
          
-        return dict(etankmin=run_eval_etankmindata, err=run_eval_errdata, ret=run_eval_retdata)
+        return dict(etankmin=run_eval_etankmindata, err=run_eval_finalerrorsdata, ret=run_eval_returndata)
  
